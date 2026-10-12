@@ -1,0 +1,52 @@
+[
+  {
+    "agent": "codex",
+    "cwd": "/fixture/desktop/example-app/.worktrees/APP-9005",
+    "host": "desktop",
+    "issue": "APP-9005",
+    "name": "app9005-impl",
+    "pane_id": "p-app9005-impl",
+    "reason": "PR #4005 merged",
+    "status": "done"
+  },
+  {
+    "agent": "codex",
+    "cwd": "/fixture/mac/example-app/.worktrees/APP-9006",
+    "host": "mac",
+    "issue": "APP-9006",
+    "name": "app9006-impl",
+    "pane_id": "p-app9006-impl",
+    "reason": "PR #4006 merged",
+    "status": "idle"
+  },
+  {
+    "agent": "codex",
+    "cwd": "/fixture/desktop/example-app/.worktrees/APP-9007",
+    "host": "desktop",
+    "issue": "APP-9007",
+    "name": "app9007-impl",
+    "pane_id": "p-app9007-impl",
+    "reason": "PR #4007 merged",
+    "status": "done"
+  },
+  {
+    "agent": "codex",
+    "cwd": "/fixture/desktop/example-app/.worktrees/APP-9015",
+    "host": "desktop",
+    "issue": "APP-9015",
+    "name": "app9015-impl",
+    "pane_id": "p-app9015-impl",
+    "reason": "no open task for 40 h",
+    "status": "idle"
+  },
+  {
+    "agent": "codex",
+    "cwd": "/fixture/mac/example-app/.worktrees/APP-9016",
+    "host": "mac",
+    "issue": "APP-9016",
+    "name": "app9016-impl",
+    "pane_id": "p-app9016-impl",
+    "reason": "Linear done",
+    "status": "done"
+  }
+]

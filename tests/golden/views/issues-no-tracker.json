@@ -1,0 +1,660 @@
+[
+  {
+    "completed": false,
+    "issue": "APP-9001",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": true,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4001,
+      "stale_base": null,
+      "state": "open",
+      "title": "APP-9001: Pipeline fixture",
+      "updated_at": "2026-10-11T06:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4001"
+    },
+    "steps": {
+      "impl": {
+        "active": true,
+        "cls": "working",
+        "host": "desktop",
+        "label": "running on desktop",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "working",
+        "task": "app9001-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "stale",
+        "label": "approved before the current fix round",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9001: Widget <preview> & \"quotes\"",
+    "updated": 1791806400
+  },
+  {
+    "completed": false,
+    "issue": "APP-9011",
+    "pr": null,
+    "steps": {
+      "impl": {
+        "active": true,
+        "cls": "working",
+        "host": "mac",
+        "label": "running on mac",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "working",
+        "task": "app9011-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      }
+    },
+    "title": "APP-9011: Synthetic view task",
+    "updated": 1791806400
+  },
+  {
+    "completed": false,
+    "issue": "APP-9012",
+    "pr": null,
+    "steps": {
+      "impl": {
+        "active": true,
+        "cls": "unknown",
+        "host": "desktop",
+        "label": "dispatched on desktop",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "dispatched",
+        "task": "app9012-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      }
+    },
+    "title": "APP-9012: Synthetic view task",
+    "updated": 1791806400
+  },
+  {
+    "completed": false,
+    "issue": "APP-9013",
+    "pr": null,
+    "steps": {
+      "gate": {
+        "cls": "queued",
+        "host": "mac",
+        "label": "queued #2 on mac",
+        "queued": 2,
+        "state": "queued",
+        "task": "app9013-gate"
+      },
+      "impl": {
+        "cls": "queued",
+        "host": "mac",
+        "label": "queued #1 on mac",
+        "queued": 1,
+        "state": "queued",
+        "task": "app9013-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      }
+    },
+    "title": "",
+    "updated": 1791806399
+  },
+  {
+    "completed": true,
+    "issue": "APP-9016",
+    "pr": null,
+    "steps": {
+      "linear": {
+        "at": 1791805800,
+        "note": "recorded 10m ago · offline linear evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done"
+      }
+    },
+    "title": "",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9010",
+    "pr": {
+      "base": "feature/APP-9005",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4010,
+      "stale_base": {
+        "branch": "feature/APP-9005",
+        "number": 4005,
+        "state": "merged"
+      },
+      "state": "open",
+      "title": "APP-9010: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4010"
+    },
+    "steps": {
+      "impl": {
+        "at": 1791770400,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9010-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "active": true,
+        "cls": "working",
+        "host": "desktop",
+        "label": "running in orchestrator on desktop: APP-9010 review #4010",
+        "state": "working",
+        "task": "APP-9010 review #4010",
+        "via": "orchestrator"
+      }
+    },
+    "title": "APP-9010: Synthetic view task",
+    "updated": 1791806400
+  },
+  {
+    "completed": false,
+    "issue": "APP-9009",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 1,
+        "pass": 1,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4009,
+      "stale_base": null,
+      "state": "open",
+      "title": "APP-9009: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4009"
+    },
+    "steps": {
+      "gate": {
+        "cls": "queued",
+        "host": "desktop",
+        "label": "queued #1 on desktop",
+        "queued": 1,
+        "state": "queued",
+        "task": "app9009-gate"
+      },
+      "impl": {
+        "at": 1791774000,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9009-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791799200,
+        "cls": "stale",
+        "host": "desktop",
+        "label": "approved on 9c842a7d, PR head is now 6f63f93a: re-run",
+        "sha": "9c842a7d9c842a7d9c842a7d9c842a7d9c842a7d",
+        "state": "approved",
+        "task": "app9009-review"
+      }
+    },
+    "title": "APP-9009: Synthetic view task",
+    "updated": 1791806399
+  },
+  {
+    "completed": false,
+    "issue": "#4999",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 0,
+        "pending": 1
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4999,
+      "stale_base": null,
+      "state": "open",
+      "title": "Refresh docs",
+      "updated_at": "2026-10-12T12:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4999"
+    },
+    "steps": {
+      "impl": {
+        "cls": "done",
+        "label": "done · PR open",
+        "note": "PR open",
+        "state": "done"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      }
+    },
+    "title": "Refresh docs",
+    "unrouted": true,
+    "updated": 1791806397
+  },
+  {
+    "completed": false,
+    "issue": "APP-9002",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4002,
+      "stale_base": null,
+      "state": "open",
+      "title": "APP-9002: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4002"
+    },
+    "steps": {
+      "gate": {
+        "active": true,
+        "cls": "need",
+        "host": "mac",
+        "label": "needs a decision on mac",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "blocked",
+        "task": "app9002-gate"
+      },
+      "impl": {
+        "at": 1791799200,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9002-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791799200,
+        "cls": "done",
+        "host": "desktop",
+        "label": "approved",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved",
+        "task": "app9002-review"
+      }
+    },
+    "title": "APP-9002: Synthetic view task",
+    "updated": 1791806400
+  },
+  {
+    "completed": false,
+    "issue": "APP-9004",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4004,
+      "stale_base": null,
+      "state": "open",
+      "title": "APP-9004: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4004"
+    },
+    "steps": {
+      "gate": {
+        "at": 1791805200,
+        "cls": "fail",
+        "label": "failed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "failed"
+      },
+      "impl": {
+        "at": 1791792000,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9004-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9004: Synthetic view task",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9003",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4003,
+      "stale_base": null,
+      "state": "open",
+      "title": "APP-9003: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4003"
+    },
+    "steps": {
+      "gate": {
+        "at": 1791805200,
+        "cls": "done",
+        "label": "passed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791795600,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9003-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9003: Synthetic view task",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9005",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4005,
+      "stale_base": null,
+      "state": "merged",
+      "title": "APP-9005: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4005"
+    },
+    "steps": {
+      "deploy": {
+        "at": 1791802800,
+        "cls": "active",
+        "label": "deploying, no update for 1h · waiting for rollout",
+        "note": "waiting for rollout",
+        "quiet": true,
+        "sha": null,
+        "state": "deploying"
+      },
+      "gate": {
+        "at": 1791799200,
+        "cls": "done",
+        "label": "passed",
+        "note": null,
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791788400,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9005-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-review"
+      },
+      "merge": {
+        "cls": "done",
+        "label": "merged · #4005",
+        "note": "#4005",
+        "state": "merged"
+      },
+      "review": {
+        "at": 1791795600,
+        "cls": "done",
+        "label": "approved",
+        "note": null,
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9005: Synthetic view task",
+    "updated": 1791802800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9006",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4006,
+      "stale_base": null,
+      "state": "merged",
+      "title": "APP-9006: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4006"
+    },
+    "steps": {
+      "deploy": {
+        "at": 1791804600,
+        "cls": "done",
+        "label": "deployed · offline deploy evidence",
+        "note": "offline deploy evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "deployed"
+      },
+      "gate": {
+        "at": 1791805200,
+        "cls": "done",
+        "label": "passed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791784800,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9006-impl"
+      },
+      "linear": {
+        "at": 1791804000,
+        "behind": "in-review",
+        "note": "recorded 40m ago · offline linear evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "in-progress"
+      },
+      "merge": {
+        "cls": "done",
+        "label": "merged · #4006",
+        "note": "#4006",
+        "state": "merged"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9006: Synthetic view task",
+    "updated": 1791805800
+  },
+  {
+    "completed": true,
+    "issue": "APP-9007",
+    "pr": {
+      "base": "main",
+      "checks": {
+        "fail": 0,
+        "pass": 2,
+        "pending": 0
+      },
+      "draft": false,
+      "head": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+      "number": 4007,
+      "stale_base": null,
+      "state": "merged",
+      "title": "APP-9007: Pipeline fixture",
+      "updated_at": "2026-10-12T11:00:00Z",
+      "url": "https://github.com/example/example-app/pull/4007"
+    },
+    "steps": {
+      "deploy": {
+        "at": 1791804600,
+        "cls": "done",
+        "label": "deployed · offline deploy evidence",
+        "note": "offline deploy evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "deployed"
+      },
+      "gate": {
+        "at": 1791805200,
+        "cls": "done",
+        "label": "passed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791781200,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9007-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "done"
+      },
+      "merge": {
+        "cls": "done",
+        "label": "merged · #4007",
+        "note": "#4007",
+        "state": "merged"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      },
+      "staging": {
+        "at": 1791804000,
+        "cls": "done",
+        "label": "verified · offline staging evidence",
+        "note": "offline staging evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "verified"
+      }
+    },
+    "title": "APP-9007: Synthetic view task",
+    "updated": 1791805800
+  }
+]

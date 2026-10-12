@@ -1,0 +1,50 @@
+{
+  "contract_version": 1,
+  "task_id": "rt-app9999-backend",
+  "summary": "EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.",
+  "authorization": {
+    "scope": "project-workflow",
+    "granted_by": "dev (example; not granted)",
+    "allowed": [
+      "git fetch",
+      "the project's issue workflow up to the stop point, including its draft-PR flow"
+    ],
+    "forbidden": [
+      "force-push or push any branch but the task's own",
+      "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+      "git pull/reset/clean/checkout/stash in the main checkout",
+      "stop other agents",
+      "change security settings"
+    ]
+  },
+  "routing": {
+    "requested_host": null,
+    "requires": [
+      "linux",
+      "docker"
+    ]
+  },
+  "repository": {
+    "name": "example-app",
+    "remote": "https://github.com/example-org/example-app.git"
+  },
+  "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "worktree": {
+    "strategy": "pnpm-worktree-issue",
+    "issue": "APP-9999",
+    "deps": "link",
+    "env": "link"
+  },
+  "worker": {
+    "kind": "codex",
+    "name": "rt-app9999",
+    "model": null,
+    "effort": null
+  },
+  "resources": {
+    "timeout_minutes": 90,
+    "runtime": "compose",
+    "notes": "Model/effort: set from the project's own guide when dispatching."
+  },
+  "stop_condition": "One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA."
+}

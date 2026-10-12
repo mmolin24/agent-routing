@@ -1,0 +1,466 @@
+[
+  {
+    "completed": false,
+    "issue": "APP-9001",
+    "pr": null,
+    "steps": {
+      "impl": {
+        "active": true,
+        "cls": "wait",
+        "host": "desktop",
+        "label": "worker stopped on desktop: read its output",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9001-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9001: Widget <preview> & \"quotes\"",
+    "updated": 1791810060
+  },
+  {
+    "completed": false,
+    "issue": "APP-9011",
+    "pr": null,
+    "steps": {
+      "impl": {
+        "active": true,
+        "cls": "unknown",
+        "host": "mac",
+        "label": "mac unreachable",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "dispatched",
+        "task": "app9011-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      }
+    },
+    "title": "APP-9011: Synthetic view task",
+    "updated": 1791810060
+  },
+  {
+    "completed": false,
+    "issue": "APP-9012",
+    "pr": null,
+    "steps": {
+      "impl": {
+        "active": true,
+        "cls": "unknown",
+        "host": "desktop",
+        "label": "dispatched on desktop",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "dispatched",
+        "task": "app9012-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      }
+    },
+    "title": "APP-9012: Synthetic view task",
+    "updated": 1791810060
+  },
+  {
+    "completed": false,
+    "issue": "APP-9013",
+    "pr": null,
+    "steps": {
+      "gate": {
+        "cls": "queued",
+        "host": "mac",
+        "label": "queued #2 on mac",
+        "queued": 2,
+        "state": "queued",
+        "task": "app9013-gate"
+      },
+      "impl": {
+        "cls": "queued",
+        "host": "mac",
+        "label": "queued #1 on mac",
+        "queued": 1,
+        "state": "queued",
+        "task": "app9013-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      }
+    },
+    "title": "",
+    "updated": 1791810059
+  },
+  {
+    "completed": false,
+    "issue": "APP-9016",
+    "pr": null,
+    "steps": {
+      "linear": {
+        "at": 1791805800,
+        "note": "recorded 1h ago · offline linear evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done"
+      }
+    },
+    "title": "",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9010",
+    "pr": null,
+    "steps": {
+      "impl": {
+        "at": 1791770400,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9010-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "active": true,
+        "cls": "working",
+        "host": "desktop",
+        "label": "running in orchestrator on desktop: APP-9010 review #4010",
+        "state": "working",
+        "task": "APP-9010 review #4010",
+        "via": "orchestrator"
+      }
+    },
+    "title": "APP-9010: Synthetic view task",
+    "updated": 1791810060
+  },
+  {
+    "completed": false,
+    "issue": "APP-9002",
+    "pr": null,
+    "steps": {
+      "gate": {
+        "active": true,
+        "cls": "unknown",
+        "host": "mac",
+        "label": "mac unreachable",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9002-gate"
+      },
+      "impl": {
+        "at": 1791799200,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9002-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791799200,
+        "cls": "done",
+        "host": "desktop",
+        "label": "approved",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved",
+        "task": "app9002-review"
+      }
+    },
+    "title": "APP-9002: Synthetic view task",
+    "updated": 1791810060
+  },
+  {
+    "completed": false,
+    "issue": "APP-9009",
+    "pr": null,
+    "steps": {
+      "gate": {
+        "cls": "queued",
+        "host": "desktop",
+        "label": "queued #1 on desktop",
+        "queued": 1,
+        "state": "queued",
+        "task": "app9009-gate"
+      },
+      "impl": {
+        "at": 1791774000,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9009-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791799200,
+        "cls": "done",
+        "host": "desktop",
+        "label": "approved",
+        "sha": "9c842a7d9c842a7d9c842a7d9c842a7d9c842a7d",
+        "state": "approved",
+        "task": "app9009-review"
+      }
+    },
+    "title": "APP-9009: Synthetic view task",
+    "updated": 1791810059
+  },
+  {
+    "completed": false,
+    "issue": "APP-9004",
+    "pr": null,
+    "steps": {
+      "gate": {
+        "at": 1791805200,
+        "cls": "fail",
+        "label": "failed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "failed"
+      },
+      "impl": {
+        "at": 1791792000,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9004-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9004: Synthetic view task",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9003",
+    "pr": null,
+    "steps": {
+      "gate": {
+        "at": 1791805200,
+        "cls": "done",
+        "label": "passed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791795600,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9003-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9003: Synthetic view task",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9006",
+    "pr": null,
+    "steps": {
+      "deploy": {
+        "at": 1791804600,
+        "cls": "done",
+        "label": "deployed · offline deploy evidence",
+        "note": "offline deploy evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "deployed"
+      },
+      "gate": {
+        "at": 1791805200,
+        "cls": "done",
+        "label": "passed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791784800,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9006-impl"
+      },
+      "linear": {
+        "at": 1791804000,
+        "note": "recorded 2h ago · offline linear evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9006: Synthetic view task",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9007",
+    "pr": null,
+    "steps": {
+      "deploy": {
+        "at": 1791804600,
+        "cls": "done",
+        "label": "deployed · offline deploy evidence",
+        "note": "offline deploy evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "deployed"
+      },
+      "gate": {
+        "at": 1791805200,
+        "cls": "done",
+        "label": "passed · offline gate evidence",
+        "note": "offline gate evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791781200,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9007-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "done"
+      },
+      "review": {
+        "at": 1791805800,
+        "cls": "done",
+        "label": "approved · offline review evidence",
+        "note": "offline review evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      },
+      "staging": {
+        "at": 1791804000,
+        "cls": "done",
+        "label": "verified · offline staging evidence",
+        "note": "offline staging evidence",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "verified"
+      }
+    },
+    "title": "APP-9007: Synthetic view task",
+    "updated": 1791805800
+  },
+  {
+    "completed": false,
+    "issue": "APP-9005",
+    "pr": null,
+    "steps": {
+      "deploy": {
+        "at": 1791802800,
+        "cls": "active",
+        "label": "deploying, no update for 2h · waiting for rollout",
+        "note": "waiting for rollout",
+        "quiet": true,
+        "sha": null,
+        "state": "deploying"
+      },
+      "gate": {
+        "at": 1791799200,
+        "cls": "done",
+        "label": "passed",
+        "note": null,
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "passed"
+      },
+      "impl": {
+        "at": 1791788400,
+        "cls": "done",
+        "host": "desktop",
+        "label": "done",
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "done",
+        "task": "app9005-impl"
+      },
+      "linear": {
+        "inferred": true,
+        "note": "inferred from the pipeline",
+        "state": "in-progress"
+      },
+      "review": {
+        "at": 1791795600,
+        "cls": "done",
+        "label": "approved",
+        "note": null,
+        "sha": "6f63f93a6f63f93a6f63f93a6f63f93a6f63f93a",
+        "state": "approved"
+      }
+    },
+    "title": "APP-9005: Synthetic view task",
+    "updated": 1791802800
+  }
+]

@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+"""Run one heavy command when this machine has a free heavy slot.
+
+    heavy <command> [args...]      # e.g. heavy pnpm ready:check 1
+    heavy --status                 # JSON: slots, who holds them, who's waiting
+
+Workers mostly wait on the model, so routing doesn't cap them. Their heavy
+phases are what load a machine: Docker / Compose, full test suites, typechecks,
+web builds and browser smokes. Wrapping each of those in `heavy` makes them take
+turns: at most `max_heavy` (config, per machine) run at once, and the rest wait
+first come, first served.
+
+Slots are file locks under ~/.cache/agent-routing/heavy, so a crashed command
+frees its slot when its process exits. Linux and macOS; Python 3.8+.
+"""
+
+import fcntl
+import json
+import os
+import host_identity as H
+import signal
+import subprocess
+import sys
+import time
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIR = os.path.expanduser(os.environ.get("RT_HEAVY_DIR", "~/.cache/agent-routing/heavy"))
+POLL_S = 0.5
+
+
+def slot_count():
+    """max_heavy for this machine, from the routing config (default 2)."""
+    if os.environ.get("RT_HEAVY_SLOTS"):
+        return max(1, int(os.environ["RT_HEAVY_SLOTS"]))
+    for name in ("hosts.local.json", "hosts.example.json"):
+        try:
+            with open(os.path.join(ROOT, "config", name)) as f:
+                cfg = json.load(f)
+            break
+        except (OSError, ValueError, KeyError):
+            cfg = {"hosts": {}}
+    if not cfg["hosts"]:
+        return 2
+    host = H.detect_host(cfg)
+    return max(1, int(cfg["hosts"][host].get("max_heavy") or 2))
+
+
+def alive(pid):
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except (OSError, ValueError, TypeError):
+        return False
+
+
+def read_json(path):
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+def status():
+    n = slot_count()
+    holders, waiting = [], []
+    for i in range(n):
+        h = read_json(os.path.join(DIR, f"slot-{i}.json"))
+        if h and alive(h.get("pid")):
+            holders.append(dict(h, slot=i))
+    wdir = os.path.join(DIR, "waiting")
+    for name in sorted(os.listdir(wdir)) if os.path.isdir(wdir) else []:
+        w = read_json(os.path.join(wdir, name))
+        if w and alive(w.get("pid")):
+            waiting.append(w)
+    return {"slots": n, "holders": holders, "waiting": waiting}
+
+
+def describe(argv):
+    text = " ".join(argv)
+    return text if len(text) <= 80 else text[:79] + "…"
+
+
+def main(argv):
+    if not argv or argv[0] in ("-h", "--help"):
+        print(__doc__.strip())
+        return 0 if argv else 2
+    if argv[0] == "--status":
+        print(json.dumps(status()))
+        return 0
+    os.makedirs(os.path.join(DIR, "waiting"), exist_ok=True)
+    n = slot_count()
+    me = {"pid": os.getpid(), "task": os.environ.get("RT_TASK", ""), "cmd": describe(argv),
+          "cwd": os.getcwd(), "since": time.time()}
+    ticket = os.path.join(DIR, "waiting", f"{time.time_ns()}-{os.getpid()}.json")
+    with open(ticket, "w") as f:
+        json.dump(me, f)
+    lock, slot, announced = None, None, False
+    try:
+        while lock is None:
+            # First come, first served: only the oldest live ticket may take a slot.
+            tickets = sorted(os.listdir(os.path.join(DIR, "waiting")))
+            ahead = []
+            for name in tickets:
+                if name == os.path.basename(ticket):
+                    break
+                w = read_json(os.path.join(DIR, "waiting", name))
+                if w and alive(w.get("pid")):
+                    ahead.append(w)
+                else:                                   # a waiter that died
+                    try:
+                        os.remove(os.path.join(DIR, "waiting", name))
+                    except OSError:
+                        pass
+            if not ahead:
+                for i in range(n):
+                    f = open(os.path.join(DIR, f"slot-{i}.lock"), "a+")
+                    try:
+                        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    except OSError:
+                        f.close()
+                        continue
+                    lock, slot = f, i
+                    break
+            if lock is None:
+                if not announced:
+                    st = status()
+                    who = ", ".join(f"{h.get('task') or h['pid']} ({h['cmd'][:40]})" for h in st["holders"])
+                    sys.stderr.write(f"heavy: all {n} heavy slots on this machine are busy ({who}); "
+                                     f"{len(ahead)} ahead of you. Waiting…\n")
+                    sys.stderr.flush()
+                    announced = True
+                time.sleep(POLL_S)
+        os.remove(ticket)
+        ticket = None
+        holder = os.path.join(DIR, f"slot-{slot}.json")
+        with open(holder, "w") as f:
+            json.dump(dict(me, since=time.time()), f)
+        if announced:
+            sys.stderr.write(f"heavy: got slot {slot + 1}/{n}; running.\n")
+            sys.stderr.flush()
+        child = subprocess.Popen(argv)
+        for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+            signal.signal(sig, lambda s, _f: child.send_signal(s))
+        rc = child.wait()
+        return rc if rc >= 0 else 128 - rc
+    except FileNotFoundError as e:
+        sys.stderr.write(f"heavy: {e}\n")
+        return 127
+    finally:
+        if ticket:
+            try:
+                os.remove(ticket)
+            except OSError:
+                pass
+        if lock is not None:
+            try:
+                os.remove(os.path.join(DIR, f"slot-{slot}.json"))
+            except OSError:
+                pass
+            lock.close()                                   # releases the flock
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except ValueError as e:
+        sys.stderr.write(f"heavy: {e}\n")
+        sys.exit(2)

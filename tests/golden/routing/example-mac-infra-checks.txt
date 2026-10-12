@@ -1,0 +1,509 @@
+{
+  "argv": [
+    "<ROOT>/examples/tasks/mac-infra-checks.json",
+    "--config",
+    "<ROOT>/config/hosts.example.json",
+    "--active-dir",
+    "<ROOT>/runs/active",
+    "--json",
+    "--record",
+    "--run-preflight"
+  ],
+  "artifacts": {
+    "runs/active/rt-infra-checks.json": {
+      "_occupies": {
+        "branch": null,
+        "host": "mac",
+        "path": null
+      },
+      "authorization": {
+        "allowed": [
+          "git fetch"
+        ],
+        "forbidden": [
+          "tofu plan/apply or anything needing cloud credentials",
+          "edit files"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "read-only"
+      },
+      "commands": [
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "tofu fmt -check -recursive"
+        }
+      ],
+      "contract_version": 1,
+      "mode": "command",
+      "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "repository": {
+        "name": "example-infra",
+        "remote": "https://github.com/example-org/example-infra.git"
+      },
+      "resources": {
+        "timeout_minutes": 10
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "opentofu"
+        ]
+      },
+      "routing_ref": "<ROUTING_REF>",
+      "selected_host": "mac",
+      "stop_condition": "Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.",
+      "summary": "EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.",
+      "task_id": "rt-infra-checks",
+      "worker": {
+        "kind": "codex",
+        "name": "rt-infra"
+      },
+      "worktree": {
+        "strategy": "existing-checkout"
+      }
+    },
+    "runs/tasks/rt-infra-checks/decision.json": {
+      "authorization_scope": "read-only",
+      "blockers": [],
+      "config": "config/hosts.example.json",
+      "execution_authorized": false,
+      "handoff_note": "# Task rt-infra-checks: EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-infra at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n- Work directory: /Users/dev/example-infra\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/rt-infra-checks`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-infra/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: read-only (granted by dev (example; not granted))\n- Allowed: git fetch\n- Forbidden: tofu plan/apply or anything needing cloud credentials\n- Forbidden: edit files\n- Stop point: Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.\n\n## Extra commands requested for this task\n- `tofu fmt -check -recursive` (in <WORKTREE>)\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+      "heavy": false,
+      "host_levels": {
+        "cpu": "ok",
+        "docker": "ok",
+        "hot": [],
+        "mem": "ok",
+        "overall": "ok",
+        "swap": "ok"
+      },
+      "host_load": {
+        "cores": 16,
+        "docker": "up",
+        "docker_limit": 15032385536,
+        "docker_used": 2147483648,
+        "load1": 1.0,
+        "mem_avail": 17179869184,
+        "mem_total": 25769803776,
+        "pressure": "normal",
+        "swap_total": 4294967296,
+        "swap_used": 0
+      },
+      "orchestrator_host": "desktop",
+      "plan": [
+        {
+          "commands": [
+            "herdr --machine Mac agent list",
+            "herdr --machine Mac workspace list"
+          ],
+          "step": "Discover live state on the target (IDs are per-server; never reuse)"
+        },
+        {
+          "commands": [],
+          "step": "Confirm no live agent is already named 'rt-infra' and it has no open task"
+        },
+        {
+          "commands": [
+            "herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus",
+            "herdr --machine Mac workspace create --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus"
+          ],
+          "step": "Open the task's own tab in the issue's workspace (rt-infra-checks): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+        },
+        {
+          "commands": [],
+          "step": "Read-only in the existing checkout: preflight must have shown HEAD == project_commit"
+        },
+        {
+          "commands": [
+            "herdr --machine Mac pane run __ROOT_PANE__ 'builtin cd /Users/dev/example-infra && tofu fmt -check -recursive; echo \"__RT_DONE_1__ rc=$?\"'",
+            "herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_1__ rc=[0-9]+' --timeout 600000"
+          ],
+          "step": "Run each contract command, waiting for rc between them; long-running ones get their own pane"
+        },
+        {
+          "commands": [
+            "herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 200"
+          ],
+          "step": "Collect output, then verify independently; stop long-running panes with ctrl+c when done"
+        }
+      ],
+      "preflight": {
+        "blockers": "",
+        "commit_behind_ref": "origin/main 0",
+        "home": "<HOME>/mac",
+        "kernel": "Darwin",
+        "pnpm_version": "11.0.8",
+        "preflight_status": "ok",
+        "repo_dirty_tracked": "0",
+        "repo_last_fetch": "2026-10-12T12:00:00Z",
+        "repo_untracked": "0"
+      },
+      "preflight_command": "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-mac 'bash -s -- --repo /Users/dev/example-infra --expect-remote https://github.com/example-org/example-infra.git --expect-commit bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb --tools '\"'\"'git node pnpm tofu'\"'\"' --herdr-bin '\"'\"'$HOME/.local/bin/herdr'\"'\"' --path-prepend '\"'\"'$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools'\"'\"'' < scripts/preflight.sh",
+      "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "queue_reasons": [],
+      "repository": "example-infra",
+      "routing_ref": "<ROUTING_REF>",
+      "rule": "only host with ['opentofu']",
+      "selected_host": "mac",
+      "status": "routed",
+      "task_id": "rt-infra-checks",
+      "warnings": [
+        "target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree"
+      ]
+    },
+    "runs/tasks/rt-infra-checks/handoff.md": "# Task rt-infra-checks: EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-infra at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n- Work directory: /Users/dev/example-infra\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/rt-infra-checks`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-infra/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: read-only (granted by dev (example; not granted))\n- Allowed: git fetch\n- Forbidden: tofu plan/apply or anything needing cloud credentials\n- Forbidden: edit files\n- Stop point: Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.\n\n## Extra commands requested for this task\n- `tofu fmt -check -recursive` (in <WORKTREE>)\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "runs/tasks/rt-infra-checks/task.json": {
+      "authorization": {
+        "allowed": [
+          "git fetch"
+        ],
+        "forbidden": [
+          "tofu plan/apply or anything needing cloud credentials",
+          "edit files"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "read-only"
+      },
+      "commands": [
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "tofu fmt -check -recursive"
+        }
+      ],
+      "contract_version": 1,
+      "mode": "command",
+      "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "repository": {
+        "name": "example-infra",
+        "remote": "https://github.com/example-org/example-infra.git"
+      },
+      "resources": {
+        "timeout_minutes": 10
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "opentofu"
+        ]
+      },
+      "routing_ref": "<ROUTING_REF>",
+      "selected_host": "mac",
+      "stop_condition": "Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.",
+      "summary": "EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.",
+      "task_id": "rt-infra-checks",
+      "worker": {
+        "kind": "codex",
+        "name": "rt-infra"
+      },
+      "worktree": {
+        "strategy": "existing-checkout"
+      }
+    }
+  },
+  "cli_output": {
+    "authorization_scope": "read-only",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "execution_authorized": false,
+    "handoff_note": "# Task rt-infra-checks: EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-infra at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n- Work directory: /Users/dev/example-infra\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/rt-infra-checks`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-infra/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: read-only (granted by dev (example; not granted))\n- Allowed: git fetch\n- Forbidden: tofu plan/apply or anything needing cloud credentials\n- Forbidden: edit files\n- Stop point: Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.\n\n## Extra commands requested for this task\n- `tofu fmt -check -recursive` (in <WORKTREE>)\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "heavy": false,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "host_load": {
+      "cores": 16,
+      "docker": "up",
+      "docker_limit": 15032385536,
+      "docker_used": 2147483648,
+      "load1": 1.0,
+      "mem_avail": 17179869184,
+      "mem_total": 25769803776,
+      "pressure": "normal",
+      "swap_total": 4294967296,
+      "swap_used": 0
+    },
+    "orchestrator_host": "desktop",
+    "plan": [
+      {
+        "commands": [
+          "herdr --machine Mac agent list",
+          "herdr --machine Mac workspace list"
+        ],
+        "step": "Discover live state on the target (IDs are per-server; never reuse)"
+      },
+      {
+        "commands": [],
+        "step": "Confirm no live agent is already named 'rt-infra' and it has no open task"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus",
+          "herdr --machine Mac workspace create --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus"
+        ],
+        "step": "Open the task's own tab in the issue's workspace (rt-infra-checks): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+      },
+      {
+        "commands": [],
+        "step": "Read-only in the existing checkout: preflight must have shown HEAD == project_commit"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac pane run __ROOT_PANE__ 'builtin cd /Users/dev/example-infra && tofu fmt -check -recursive; echo \"__RT_DONE_1__ rc=$?\"'",
+          "herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_1__ rc=[0-9]+' --timeout 600000"
+        ],
+        "step": "Run each contract command, waiting for rc between them; long-running ones get their own pane"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 200"
+        ],
+        "step": "Collect output, then verify independently; stop long-running panes with ctrl+c when done"
+      }
+    ],
+    "preflight": {
+      "blockers": "",
+      "commit_behind_ref": "origin/main 0",
+      "home": "<HOME>/mac",
+      "kernel": "Darwin",
+      "pnpm_version": "11.0.8",
+      "preflight_status": "ok",
+      "repo_dirty_tracked": "0",
+      "repo_last_fetch": "2026-10-12T12:00:00Z",
+      "repo_untracked": "0"
+    },
+    "preflight_command": "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-mac 'bash -s -- --repo /Users/dev/example-infra --expect-remote https://github.com/example-org/example-infra.git --expect-commit bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb --tools '\"'\"'git node pnpm tofu'\"'\"' --herdr-bin '\"'\"'$HOME/.local/bin/herdr'\"'\"' --path-prepend '\"'\"'$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools'\"'\"'' < scripts/preflight.sh",
+    "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "queue_reasons": [],
+    "recorded": "runs/tasks/rt-infra-checks",
+    "repository": "example-infra",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "only host with ['opentofu']",
+    "selected_host": "mac",
+    "status": "routed",
+    "task_id": "rt-infra-checks",
+    "warnings": [
+      "target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree"
+    ]
+  },
+  "decision": {
+    "authorization_scope": "read-only",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "execution_authorized": false,
+    "handoff_note": "# Task rt-infra-checks: EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-infra at bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n- Work directory: /Users/dev/example-infra\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/rt-infra-checks`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-infra/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: read-only (granted by dev (example; not granted))\n- Allowed: git fetch\n- Forbidden: tofu plan/apply or anything needing cloud credentials\n- Forbidden: edit files\n- Stop point: Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.\n\n## Extra commands requested for this task\n- `tofu fmt -check -recursive` (in <WORKTREE>)\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "heavy": false,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "host_load": {
+      "cores": 16,
+      "docker": "up",
+      "docker_limit": 15032385536,
+      "docker_used": 2147483648,
+      "load1": 1.0,
+      "mem_avail": 17179869184,
+      "mem_total": 25769803776,
+      "pressure": "normal",
+      "swap_total": 4294967296,
+      "swap_used": 0
+    },
+    "orchestrator_host": "desktop",
+    "plan": [
+      {
+        "commands": [
+          "herdr --machine Mac agent list",
+          "herdr --machine Mac workspace list"
+        ],
+        "step": "Discover live state on the target (IDs are per-server; never reuse)"
+      },
+      {
+        "commands": [],
+        "step": "Confirm no live agent is already named 'rt-infra' and it has no open task"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus",
+          "herdr --machine Mac workspace create --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus"
+        ],
+        "step": "Open the task's own tab in the issue's workspace (rt-infra-checks): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+      },
+      {
+        "commands": [],
+        "step": "Read-only in the existing checkout: preflight must have shown HEAD == project_commit"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac pane run __ROOT_PANE__ 'builtin cd /Users/dev/example-infra && tofu fmt -check -recursive; echo \"__RT_DONE_1__ rc=$?\"'",
+          "herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_1__ rc=[0-9]+' --timeout 600000"
+        ],
+        "step": "Run each contract command, waiting for rc between them; long-running ones get their own pane"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 200"
+        ],
+        "step": "Collect output, then verify independently; stop long-running panes with ctrl+c when done"
+      }
+    ],
+    "preflight": {
+      "blockers": "",
+      "commit_behind_ref": "origin/main 0",
+      "home": "<HOME>/mac",
+      "kernel": "Darwin",
+      "pnpm_version": "11.0.8",
+      "preflight_status": "ok",
+      "repo_dirty_tracked": "0",
+      "repo_last_fetch": "2026-10-12T12:00:00Z",
+      "repo_untracked": "0"
+    },
+    "preflight_command": "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-mac 'bash -s -- --repo /Users/dev/example-infra --expect-remote https://github.com/example-org/example-infra.git --expect-commit bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb --tools '\"'\"'git node pnpm tofu'\"'\"' --herdr-bin '\"'\"'$HOME/.local/bin/herdr'\"'\"' --path-prepend '\"'\"'$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools'\"'\"'' < scripts/preflight.sh",
+    "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "queue_reasons": [],
+    "recorded": "runs/tasks/rt-infra-checks",
+    "repository": "example-infra",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "only host with ['opentofu']",
+    "selected_host": "mac",
+    "status": "routed",
+    "task_id": "rt-infra-checks",
+    "warnings": [
+      "target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree"
+    ]
+  },
+  "exit_code": 0,
+  "helpers": {
+    "herdr_group": [
+      "rt-infra-checks",
+      "rt-infra-checks"
+    ],
+    "issue_key": null,
+    "setup_command": null,
+    "task_step": "impl",
+    "worktree_dir": "/Users/dev/example-infra",
+    "worktree_identity": [
+      null,
+      null
+    ]
+  },
+  "human_output": "task:          rt-infra-checks\nrouting_ref:   <ROUTING_REF>\norchestrator:  desktop\nselected host: mac  (only host with ['opentofu'])\nrepository:    example-infra @ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nauthorization: read-only  — execution_authorized: NO (recommendation only)\nload class:    light (uncapped)\nwarning:       target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree\npreflight:\n  preflight_status=ok\n  blockers=\n  commit_behind_ref=origin/main 0\n  home=<HOME>/mac\n  kernel=Darwin\n  repo_last_fetch=2026-10-12T12:00:00Z\n  repo_dirty_tracked=0\n  repo_untracked=0\n  pnpm_version=11.0.8\nrecorded:      runs/tasks/rt-infra-checks/ (task.json, decision.json, handoff.md) + active marker\ndry-run plan (fill __PLACEHOLDERS__ from live JSON responses; review every command; never paste one unfilled):\n  1. Discover live state on the target (IDs are per-server; never reuse)\n       $ herdr --machine Mac agent list\n       $ herdr --machine Mac workspace list\n  2. Confirm no live agent is already named 'rt-infra' and it has no open task\n  3. Open the task's own tab in the issue's workspace (rt-infra-checks): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it\n       $ herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus\n       $ herdr --machine Mac workspace create --cwd /Users/dev/example-infra --label rt-infra-checks --no-focus\n  4. Read-only in the existing checkout: preflight must have shown HEAD == project_commit\n  5. Run each contract command, waiting for rc between them; long-running ones get their own pane\n       $ herdr --machine Mac pane run __ROOT_PANE__ 'builtin cd /Users/dev/example-infra && tofu fmt -check -recursive; echo \"__RT_DONE_1__ rc=$?\"'\n       $ herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_1__ rc=[0-9]+' --timeout 600000\n  6. Collect output, then verify independently; stop long-running panes with ctrl+c when done\n       $ herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 200\nstatus:        ROUTED\n",
+  "preflight_calls": [
+    {
+      "argv": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=10",
+        "dev-mac",
+        "bash -s -- --repo /Users/dev/example-infra --expect-remote https://github.com/example-org/example-infra.git --expect-commit bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb --tools 'git node pnpm tofu' --herdr-bin '$HOME/.local/bin/herdr' --path-prepend '$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools'"
+      ],
+      "stdin_path": "<ROOT>/scripts/preflight.sh"
+    }
+  ],
+  "resolve_calls": [],
+  "stderr": "",
+  "task_after_decide": {
+    "authorization": {
+      "allowed": [
+        "git fetch"
+      ],
+      "forbidden": [
+        "tofu plan/apply or anything needing cloud credentials",
+        "edit files"
+      ],
+      "granted_by": "dev (example; not granted)",
+      "scope": "read-only"
+    },
+    "commands": [
+      {
+        "cwd": "<WORKTREE>",
+        "mutating": false,
+        "run": "tofu fmt -check -recursive"
+      }
+    ],
+    "contract_version": 1,
+    "mode": "command",
+    "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "repository": {
+      "name": "example-infra",
+      "remote": "https://github.com/example-org/example-infra.git"
+    },
+    "resources": {
+      "timeout_minutes": 10
+    },
+    "routing": {
+      "requested_host": null,
+      "requires": [
+        "opentofu"
+      ]
+    },
+    "stop_condition": "Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.",
+    "summary": "EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.",
+    "task_id": "rt-infra-checks",
+    "worker": {
+      "kind": "codex",
+      "name": "rt-infra"
+    },
+    "worktree": {
+      "strategy": "existing-checkout"
+    }
+  },
+  "task_before_decide": {
+    "authorization": {
+      "allowed": [
+        "git fetch"
+      ],
+      "forbidden": [
+        "tofu plan/apply or anything needing cloud credentials",
+        "edit files"
+      ],
+      "granted_by": "dev (example; not granted)",
+      "scope": "read-only"
+    },
+    "commands": [
+      {
+        "cwd": "<WORKTREE>",
+        "mutating": false,
+        "run": "tofu fmt -check -recursive"
+      }
+    ],
+    "contract_version": 1,
+    "mode": "command",
+    "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "repository": {
+      "name": "example-infra",
+      "remote": "https://github.com/example-org/example-infra.git"
+    },
+    "resources": {
+      "timeout_minutes": 10
+    },
+    "routing": {
+      "requested_host": null,
+      "requires": [
+        "opentofu"
+      ]
+    },
+    "stop_condition": "Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide.",
+    "summary": "EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.",
+    "task_id": "rt-infra-checks",
+    "worker": {
+      "kind": "codex",
+      "name": "rt-infra"
+    },
+    "worktree": {
+      "strategy": "existing-checkout"
+    }
+  }
+}

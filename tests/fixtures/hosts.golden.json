@@ -1,0 +1,370 @@
+{
+  "_comment": "Example only. Copy to config/hosts.local.json (git-ignored) and edit. Never put credentials, key paths, agent sockets or tokens here. capabilities drive host selection. port_slots: slot 0 (base ports) is the main checkout and never assigned; slot n adds n*step to every *_PORT. grants are named authority presets for route.py --issue; they state authority, not workflow (a grant's requires adds capability tags it needs, e.g. staging-login: a host where scripts/staging-login.sh can sign in). worker_args: native flags added to every routed worker (auto-approval; anything still needing a decision bubbles up via route.py --blocked).",
+  "config_version": 1,
+  "operator": "dev",
+  "default_repo": "example-app",
+  "default_linux_host": "desktop",
+  "routing_home": "desktop",
+  "capability_tools": {
+    "docker": [
+      "docker"
+    ],
+    "xcode": [
+      "xcodebuild",
+      "xcrun"
+    ],
+    "ios-simulator": [
+      "xcrun"
+    ],
+    "android-emulator": [
+      "emulator",
+      "adb"
+    ],
+    "opentofu": [
+      "tofu"
+    ],
+    "web": [
+      "node",
+      "pnpm"
+    ]
+  },
+  "worker_args": {
+    "codex": [
+      "--approve-for-me"
+    ],
+    "claude": [
+      "--permission-mode",
+      "auto"
+    ]
+  },
+  "worker_defaults": {
+    "codex": {
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    }
+  },
+  "known_agents": {
+    "orchestrator": "orchestrator",
+    "orchestrator-cl": "orchestrator (standing down)",
+    "routing-maintainer": "routing maintainer"
+  },
+  "grants": {
+    "draft-pr": {
+      "scope": "project-workflow",
+      "allowed": [
+        "git fetch",
+        "the project's issue workflow up to the stop point: commit and push the task's own branch and open ONE draft PR, only once every required check is green",
+        "checkpoint pushes: at least every ~60 min of work, push the task's own branch, so no work sits only in the worktree. Push your real commits, or commit the worktree's changes as 'WIP (checkpoint): <issue> [skip ci] [skip deploy]'. A checkpoint is never a PR: that still waits for every required check to be green. Pushed history is never rewritten (force-push stays forbidden): bring main in by merging, not rebasing",
+        "to move the task to the other machine only, when the orchestrator asks: one work-in-progress commit of the worktree's changes on the task's own branch, subject 'WIP (host move): <issue> [skip ci] [skip deploy]', pushed to that branch with no PR; the next task starts a worktree at that commit and re-verifies everything before any PR"
+      ],
+      "forbidden": [
+        "force-push or push any branch but the task's own",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "One draft PR targeting main, opened only after the project's required checks are green; report PR URL, branch, exact head SHA and the checks run."
+    },
+    "local-only": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "edit and test in the task's own worktree"
+      ],
+      "forbidden": [
+        "commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Implementation plus local verification per the project's workflow; no commits."
+    },
+    "verify-only": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "create the issue worktree and run the project's verification for this platform"
+      ],
+      "forbidden": [
+        "edit tracked files, commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Verification evidence recorded per the project's skill for this platform, or an exact blocker; no commits."
+    },
+    "gate": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "run the project's readiness gate (e.g. pnpm ready:check <PR>) in the task's worktree on its own Compose project and port slot"
+      ],
+      "forbidden": [
+        "edit tracked files, commit, push, merge or mark ready",
+        "use another task's ports or the main checkout's dev database",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Readiness gate finished once; report pass/fail, the failing checks with excerpts, and the PR head SHA it ran against. Do not fix or rerun beyond the project's own retry rules."
+    },
+    "review": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "read the PR diff, the issue and the repo; focus the review on the diff",
+        "run focused checks (unit tests, typecheck, lint) in the issue's worktree when needed to confirm or rule out a finding, each wrapped in scripts/heavy"
+      ],
+      "forbidden": [
+        "edit tracked files, commit, push, comment on GitHub or Linear",
+        "start the project's Compose stack or full readiness gate (that's a gate task)",
+        "use another task's ports or the main checkout's dev database (no DB-backed integration tests)",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "One review verdict (APPROVE or CHANGES_REQUIRED) with findings tied to file:line, against the PR head SHA."
+    },
+    "staging-review": {
+      "scope": "worktree-write",
+      "requires": [
+        "staging-login"
+      ],
+      "allowed": [
+        "git fetch; run the project's staging session helper from the task's own detached worktree at origin/main (no edits)",
+        "When explicitly authorized, use the configured synthetic staging test roles through the staging session helper",
+        "browse admin, manager, editor and end-user screens and walk the flows the review needs",
+        "create test data in the staging test tenant through the app's UI, as the review needs",
+        "take screenshots of staging screens with synthetic test data, kept on this host"
+      ],
+      "forbidden": [
+        "read, print, copy or log a password or a session file's contents; type a password anywhere (the session helper signs in, never you)",
+        "sign in to production, or as any account other than the staging test roles",
+        "change accounts, users, passwords, invites, tenant, billing or security settings; delete data you didn't create",
+        "trigger anything that reaches an external provider from staging (third-party integrations, emails to real addresses)",
+        "attach screenshots or session data to Linear or GitHub; report findings as text",
+        "edit tracked files, commit, push or open PRs",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Each check recorded as pass or fail with what was seen, every piece of test data created listed, and the session files removed (scripts/staging-login.sh --clear)."
+    }
+  },
+  "hosts": {
+    "desktop": {
+      "description": "Windows desktop, Ubuntu on WSL2. Linux builds, tests and Docker.",
+      "os": "linux",
+      "capabilities": [
+        "linux",
+        "web",
+        "docker",
+        "staging-login"
+      ],
+      "herdr_bin": "$HOME/.local/bin/herdr",
+      "path_prepend": [
+        "$HOME/.local/bin",
+        "$HOME/.nvm/versions/node/v22.23.3/bin"
+      ],
+      "tools": [
+        "git",
+        "node",
+        "pnpm"
+      ],
+      "repos": {
+        "example-app": {
+          "path": "/home/dev/projects/example-app",
+          "remote": "https://github.com/example-org/example-app.git",
+          "pnpm_cmd": "pnpm",
+          "port_slots": {
+            "base": {
+              "API_HOST_PORT": 3000,
+              "POSTGRES_HOST_PORT": 5432,
+              "FRONTEND_HOST_PORT": 8081,
+              "RUNTIME_SMOKE_PORT": 43085
+            },
+            "step": 10,
+            "max_slot": 3,
+            "extra_env": {
+              "RUNTIME_SMOKE_IMAGE": "example-app-api-runtime:runtime-smoke-{task_id}"
+            }
+          },
+          "issue_worktree": "pnpm-worktree-issue"
+        },
+        "example-infra": {
+          "path": "/home/dev/projects/example-infra",
+          "remote": "https://github.com/example-org/example-infra.git",
+          "worktree_root": "/home/dev/projects/example-infra-worktrees"
+        }
+      },
+      "reach": {
+        "desktop": {
+          "mode": "local"
+        },
+        "mac": {
+          "mode": "machine",
+          "selector": "Desktop WSL",
+          "ssh_alias": "dev-wsl"
+        }
+      },
+      "max_heavy": 3,
+      "max_queue": 10,
+      "hot_limits": {
+        "load_per_core": 1.0,
+        "min_mem_avail_pct": 10,
+        "max_docker_pct": 90
+      },
+      "routing_repo": "~/projects/agent-routing",
+      "share": 1.0
+    },
+    "mac": {
+      "description": "MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.",
+      "os": "macos",
+      "capabilities": [
+        "macos",
+        "web",
+        "ios",
+        "xcode",
+        "ios-simulator",
+        "android-emulator",
+        "opentofu",
+        "docker",
+        "staging-login"
+      ],
+      "checkouts_may_be_stale": true,
+      "herdr_bin": "$HOME/.local/bin/herdr",
+      "path_prepend": [
+        "$HOME/.local/bin",
+        "/opt/homebrew/bin",
+        "$HOME/Library/Android/sdk/emulator",
+        "$HOME/Library/Android/sdk/platform-tools"
+      ],
+      "tools": [
+        "git",
+        "node",
+        "pnpm"
+      ],
+      "repos": {
+        "example-app": {
+          "path": "/Users/dev/example-app",
+          "remote": "https://github.com/example-org/example-app.git",
+          "pnpm_cmd": "npx -y pnpm@10.33.2",
+          "port_slots": {
+            "base": {
+              "API_HOST_PORT": 3000,
+              "POSTGRES_HOST_PORT": 5432,
+              "FRONTEND_HOST_PORT": 8081,
+              "RUNTIME_SMOKE_PORT": 43085
+            },
+            "step": 10,
+            "max_slot": 2,
+            "extra_env": {
+              "RUNTIME_SMOKE_IMAGE": "example-app-api-runtime:runtime-smoke-{task_id}"
+            }
+          },
+          "issue_worktree": "pnpm-worktree-issue"
+        },
+        "example-infra": {
+          "path": "/Users/dev/example-infra",
+          "remote": "https://github.com/example-org/example-infra.git",
+          "worktree_root": "/Users/dev/example-infra-worktrees"
+        }
+      },
+      "reach": {
+        "mac": {
+          "mode": "local"
+        },
+        "desktop": {
+          "mode": "machine",
+          "selector": "Mac",
+          "ssh_alias": "dev-mac"
+        }
+      },
+      "max_heavy": 2,
+      "max_queue": 6,
+      "hot_limits": {
+        "load_per_core": 1.0,
+        "min_mem_avail_pct": 10,
+        "max_docker_pct": 90
+      },
+      "routing_repo": "~/agent-routing",
+      "share": 0.6
+    }
+  },
+  "projects": {
+    "example-app": {
+      "issue_prefix": "APP",
+      "tracker": "linear",
+      "tracker_flow": {
+        "active": "in-progress",
+        "after": {"merge": "in-review", "staging": "done"},
+        "rank": {"backlog": 0, "todo": 0, "triage": 0, "in-progress": 1, "in-review": 2, "done": 3, "completed": 3}
+      },
+      "package_manager": "pnpm",
+      "worktree": {
+        "kind": "helper",
+        "create": "{pm} worktree:issue {issue} -- --base {commit} --deps {deps} --env {env}",
+        "check": "{pm} issue:check {issue}",
+        "dir": ".worktrees/{issue}",
+        "branch": "feature/{issue}"
+      },
+      "brief": {
+        "gate_example": "{pm} ready:check <PR>",
+        "focused_example": "{pm} typecheck",
+        "env_notes": {
+          "POSTGRES_HOST_PORT": "Host-side DB commands must use port $POSTGRES_HOST_PORT (export DATABASE_URL in this shell); never edit a shared or symlinked .env."
+        }
+      },
+      "gate_runtime": "compose",
+      "staging": {
+        "worktree_dir": ".worktrees/{issue}-staging",
+        "roles": ["admin", "manager", "editor", "viewer"],
+        "keychain_service": "app-staging-{role}",
+        "pass_entry": "app/staging/{role}",
+        "session_dir": "~/.cache/app-staging",
+        "session_cmd": "pnpm --silent session:create --role {role} --out {out}"
+      },
+      "pr": {
+        "checkout": "~/projects/example-app"
+      },
+      "pipeline": [
+        "impl",
+        "review",
+        "gate",
+        "merge",
+        "deploy",
+        "staging"
+      ]
+    },
+    "example-infra": {
+      "tracker": "none",
+      "package_manager": "pnpm",
+      "worktree": {
+        "kind": "git",
+        "dir": "{issue}",
+        "branch": "feature/{issue}"
+      },
+      "brief": {
+        "gate_example": "{pm} ready:check <PR>",
+        "focused_example": "{pm} typecheck",
+        "env_notes": {
+          "POSTGRES_HOST_PORT": "Host-side DB commands must use port $POSTGRES_HOST_PORT (export DATABASE_URL in this shell); never edit a shared or symlinked .env."
+        }
+      },
+      "gate_runtime": "compose",
+      "staging": {
+        "worktree_dir": "{issue}-staging"
+      },
+      "pipeline": [
+        "impl",
+        "review",
+        "gate",
+        "merge"
+      ]
+    }
+  }
+}

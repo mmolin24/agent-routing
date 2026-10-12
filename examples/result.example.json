@@ -1,0 +1,22 @@
+{
+  "contract_version": 1,
+  "task_id": "rt-app9999-backend",
+  "routing_ref": "no-git:sha256:000000000000",
+  "host": "desktop",
+  "herdr_target": {
+    "selector": "local",
+    "workspace_id": "<from workspace create>",
+    "pane_id": "<from .result.root_pane.pane_id>",
+    "agent_name": "rt-app9999"
+  },
+  "work_dir": "/home/dev/projects/example-app/.worktrees/APP-9999",
+  "head_before": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "head_after": "<verified with git -C work_dir rev-parse HEAD>",
+  "status": "succeeded",
+  "project_handoff": {
+    "pr": "<draft PR URL>",
+    "workpad": "<Linear workpad link>"
+  },
+  "blockers": [],
+  "interrupted_mutation": null
+}

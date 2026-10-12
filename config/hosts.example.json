@@ -1,0 +1,424 @@
+{
+  "_comment": "Example only. Copy to config/hosts.local.json (git-ignored), replace paths and remotes, and adapt commands to your repositories. Keep credentials, keys, tokens and agent sockets outside this repo.",
+  "config_version": 1,
+  "operator": "you",
+  "default_repo": "web-app",
+  "default_linux_host": "linux",
+  "routing_home": "mac",
+  "_note": "One routing home owns runs/ for every project. Host IDs are arbitrary; --host and --from accept configured IDs. For multiple hosts of one OS, set ROUTE_HOST or hosts.<id>.match.hostname. See docs/adding-a-project.md.",
+  "capability_tools": {
+    "docker": [
+      "docker"
+    ],
+    "xcode": [
+      "xcodebuild",
+      "xcrun"
+    ],
+    "ios-simulator": [
+      "xcrun"
+    ],
+    "android-emulator": [
+      "emulator",
+      "adb"
+    ],
+    "opentofu": [
+      "tofu"
+    ],
+    "web": [
+      "node",
+      "pnpm"
+    ]
+  },
+  "worker_args": {
+    "codex": [
+      "--approve-for-me",
+      "-c",
+      "agents.max_concurrent_threads_per_session=8",
+      "-c",
+      "agents.default_subagent_model=\"gpt-6.1-sol\"",
+      "-c",
+      "agents.default_subagent_reasoning_effort=\"high\""
+    ],
+    "claude": [
+      "--permission-mode",
+      "auto"
+    ]
+  },
+  "_worker_args_note": "Native worker flags enable automatic approval. The orchestrator must listen and answer any remaining dialog within the recorded grant.",
+  "worker_defaults": {
+    "codex": {
+      "model": "gpt-6.1-sol",
+      "effort": "high"
+    }
+  },
+  "known_agents": {
+    "orchestrator": "orchestrator"
+  },
+  "grants": {
+    "draft-pr": {
+      "scope": "project-workflow",
+      "allowed": [
+        "git fetch",
+        "the project's issue workflow up to the stop point: commit and push the task's own branch and open ONE draft PR, only once every required check is green",
+        "checkpoint pushes: at least every ~60 min of work, push the task's own branch, so no work sits only in the worktree. Push your real commits, or commit the worktree's changes as 'WIP (checkpoint): <issue> [skip ci]'. A checkpoint is never a PR: that still waits for every required check to be green. Pushed history is never rewritten (force-push stays forbidden): bring main in by merging, not rebasing",
+        "to move the task to the other machine only, when the orchestrator asks: one work-in-progress commit of the worktree's changes on the task's own branch, subject 'WIP (host move): <issue> [skip ci]', pushed to that branch with no PR; the next task starts a worktree at that commit and re-verifies everything before any PR"
+      ],
+      "forbidden": [
+        "force-push or push any branch but the task's own",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "One draft PR targeting main, opened only after the project's required checks are green; report PR URL, branch, exact head SHA and the checks run."
+    },
+    "local-only": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "edit and test in the task's own worktree"
+      ],
+      "forbidden": [
+        "commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Implementation plus local verification per the project's workflow; no commits."
+    },
+    "verify-only": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "create the issue worktree and run the project's verification for this platform"
+      ],
+      "forbidden": [
+        "edit tracked files, commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Verification evidence recorded per the project's skill for this platform, or an exact blocker; no commits."
+    },
+    "gate": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "run the project's readiness gate (e.g. pnpm ready:check <PR>) in the task's worktree on its own Compose project and port slot"
+      ],
+      "forbidden": [
+        "edit tracked files, commit, push, merge or mark ready",
+        "use another task's ports or the main checkout's dev database",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Readiness gate finished once; report pass/fail, the failing checks with excerpts, and the PR head SHA it ran against. Do not fix or rerun beyond the project's own retry rules."
+    },
+    "review": {
+      "scope": "worktree-write",
+      "allowed": [
+        "git fetch",
+        "read the PR diff, the issue and the repo; focus the review on the diff",
+        "run focused checks (unit tests, typecheck, lint) in the issue's worktree when needed to confirm or rule out a finding, each wrapped in scripts/heavy"
+      ],
+      "forbidden": [
+        "edit tracked files, commit, push, comment on the PR or issue tracker",
+        "start the project's Compose stack or full readiness gate (that's a gate task)",
+        "use another task's ports or the main checkout's dev database (no DB-backed integration tests)",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "One review verdict (APPROVE or CHANGES_REQUIRED) with findings tied to file:line, against the PR head SHA."
+    },
+    "staging-review": {
+      "scope": "worktree-write",
+      "requires": [
+        "staging-login"
+      ],
+      "allowed": [
+        "git fetch; run the project's staging session helper from the task's own detached worktree at origin/main (no edits)",
+        "sign in to the staging app only as the configured test roles, through the session prepared by scripts/credentials.sh, when the human grants staging access",
+        "browse the test role screens and walk the flows the review needs",
+        "create synthetic test data in the staging test tenant through the app UI",
+        "take screenshots of staging screens with synthetic test data, kept on this host"
+      ],
+      "forbidden": [
+        "read, print, copy or log a password or a session file's contents; type a password anywhere (the session helper signs in, never you)",
+        "sign in to production, or as any account other than the staging test roles",
+        "change accounts, users, passwords, invites, tenant, billing or security settings; delete data you didn't create",
+        "trigger external provider writes or messages to real recipients from staging",
+        "attach screenshots or session data to the tracker or PR; report findings as text",
+        "edit tracked files, commit, push or open PRs",
+        "stop other agents",
+        "change security settings"
+      ],
+      "stop_condition": "Each check recorded as pass or fail with what was seen, every piece of test data created listed, and the session files removed (scripts/credentials.sh --clear)."
+    }
+  },
+  "hosts": {
+    "linux": {
+      "description": "Linux workstation: web, Docker and infrastructure checks.",
+      "os": "linux",
+      "capabilities": [
+        "linux",
+        "web",
+        "docker",
+        "opentofu",
+        "staging-login"
+      ],
+      "_capabilities_note": "Advertise only installed and usable tools. Project profiles do not add requirements automatically; each task supplies --requires.",
+      "herdr_bin": "$HOME/.local/bin/herdr",
+      "path_prepend": [
+        "$HOME/.local/bin",
+        "$HOME/.nvm/versions/node/v22.23.3/bin"
+      ],
+      "_path_note": "Non-interactive SSH shells skip shell startup files; list the actual tool directories on this machine.",
+      "tools": [
+        "git"
+      ],
+      "repos": {
+        "web-app": {
+          "path": "/home/you/projects/web-app",
+          "remote": "https://github.com/your-org/web-app.git",
+          "pnpm_cmd": "pnpm",
+          "_note": "Use the pnpm version pinned by this repo. Runtime ports belong here because capacity and port ranges can differ by host.",
+          "port_slots": {
+            "_note": "Slot 0 is reserved for the main checkout. Task slot n adds n*step to each base port. Every published runtime port must use its exported variable; extra_env can substitute {task_id}.",
+            "base": {
+              "API_HOST_PORT": 3000,
+              "POSTGRES_HOST_PORT": 5432,
+              "FRONTEND_HOST_PORT": 8081
+            },
+            "step": 10,
+            "max_slot": 3,
+            "extra_env": {
+              "APP_RUNTIME_IMAGE": "web-app-runtime:test-{task_id}"
+            }
+          }
+        },
+        "mobile": {
+          "path": "/home/you/projects/mobile",
+          "remote": "https://github.com/your-org/mobile.git",
+          "worktree_root": "/home/you/worktrees/mobile",
+          "_note": "Plain git worktrees resolve the project dir template under this root; the main checkout is preserved."
+        },
+        "infra": {
+          "path": "/home/you/projects/infra",
+          "remote": "https://github.com/your-org/infra.git",
+          "worktree_root": "/home/you/worktrees/infra",
+          "_note": "Plain git worktrees resolve the project dir template under this root; the main checkout is preserved."
+        }
+      },
+      "reach": {
+        "linux": {
+          "mode": "local"
+        },
+        "mac": {
+          "mode": "machine",
+          "selector": "Linux Workstation",
+          "ssh_alias": "linux-workstation"
+        }
+      },
+      "_reach_note": "reach keys identify the SOURCE host. The selector is the TARGET profile label saved on that source; ssh_alias is its OpenSSH alias for probes and preflight.",
+      "max_heavy": 3,
+      "max_queue": 10,
+      "share": 1.0,
+      "_capacity_note": "Starting values, not hardware guarantees. Heavy slots are shared across every project on this machine. A lower share gives a daily-use laptop less work; measure before raising caps.",
+      "hot_limits": {
+        "load_per_core": 1.0,
+        "min_mem_avail_pct": 10,
+        "max_docker_pct": 90
+      },
+      "routing_repo": "/home/you/projects/agent-routing"
+    },
+    "mac": {
+      "description": "macOS laptop: web, native simulator and Docker work.",
+      "os": "macos",
+      "capabilities": [
+        "macos",
+        "web",
+        "docker",
+        "xcode",
+        "ios-simulator",
+        "android-emulator",
+        "staging-login"
+      ],
+      "_capabilities_note": "Advertise only installed and usable tools. Project profiles do not add requirements automatically; each task supplies --requires.",
+      "herdr_bin": "$HOME/.local/bin/herdr",
+      "path_prepend": [
+        "$HOME/.local/bin",
+        "/opt/homebrew/bin",
+        "$HOME/Library/Android/sdk/emulator",
+        "$HOME/Library/Android/sdk/platform-tools"
+      ],
+      "_path_note": "Non-interactive SSH shells skip shell startup files; list the actual tool directories on this machine.",
+      "tools": [
+        "git"
+      ],
+      "repos": {
+        "web-app": {
+          "path": "/Users/you/projects/web-app",
+          "remote": "https://github.com/your-org/web-app.git",
+          "pnpm_cmd": "npx -y pnpm@10.33.2",
+          "_note": "Use the pnpm version pinned by this repo. Runtime ports belong here because capacity and port ranges can differ by host.",
+          "port_slots": {
+            "_note": "Slot 0 is reserved for the main checkout. Task slot n adds n*step to each base port. Every published runtime port must use its exported variable; extra_env can substitute {task_id}.",
+            "base": {
+              "API_HOST_PORT": 3000,
+              "POSTGRES_HOST_PORT": 5432,
+              "FRONTEND_HOST_PORT": 8081
+            },
+            "step": 10,
+            "max_slot": 2,
+            "extra_env": {
+              "APP_RUNTIME_IMAGE": "web-app-runtime:test-{task_id}"
+            }
+          }
+        },
+        "mobile": {
+          "path": "/Users/you/projects/mobile",
+          "remote": "https://github.com/your-org/mobile.git",
+          "worktree_root": "/Users/you/worktrees/mobile",
+          "_note": "Plain git worktrees resolve the project dir template under this root; the main checkout is preserved."
+        },
+        "infra": {
+          "path": "/Users/you/projects/infra",
+          "remote": "https://github.com/your-org/infra.git",
+          "worktree_root": "/Users/you/worktrees/infra",
+          "_note": "Plain git worktrees resolve the project dir template under this root; the main checkout is preserved."
+        }
+      },
+      "reach": {
+        "mac": {
+          "mode": "local"
+        },
+        "linux": {
+          "mode": "machine",
+          "selector": "Mac Laptop",
+          "ssh_alias": "mac-laptop"
+        }
+      },
+      "_reach_note": "reach keys identify the SOURCE host. The selector is the TARGET profile label saved on that source; ssh_alias is its OpenSSH alias for probes and preflight.",
+      "max_heavy": 2,
+      "max_queue": 6,
+      "share": 0.6,
+      "_capacity_note": "Starting values, not hardware guarantees. Heavy slots are shared across every project on this machine. A lower share gives a daily-use laptop less work; measure before raising caps.",
+      "hot_limits": {
+        "load_per_core": 1.0,
+        "min_mem_avail_pct": 10,
+        "max_docker_pct": 90
+      },
+      "routing_repo": "/Users/you/projects/agent-routing"
+    }
+  },
+  "projects": {
+    "web-app": {
+      "issue_prefix": "APP",
+      "tracker": "linear",
+      "tracker_flow": {
+        "active": "in-progress",
+        "after": {
+          "merge": "in-review",
+          "staging": "done"
+        },
+        "rank": {
+          "backlog": 0,
+          "todo": 0,
+          "triage": 0,
+          "in-progress": 1,
+          "in-review": 2,
+          "done": 3,
+          "completed": 3
+        },
+        "_note": "The latest completed step in pipeline order implies its mapped status; rank detects a tracker status lag. The router never moves tracker issues."
+      },
+      "package_manager": "pnpm",
+      "worktree": {
+        "_note": "Example repository helper: provide scripts/issue-worktree.sh in web-app, or replace create/check with your existing helper. It must create this dir and branch at the exact commit and honor the deps/env modes. See docs/adding-a-project.md.",
+        "kind": "helper",
+        "create": "bash scripts/issue-worktree.sh {issue} {commit} {deps} {env}",
+        "check": "test \"$(git branch --show-current)\" = feature/{issue}",
+        "dir": ".worktrees/{issue}",
+        "branch": "feature/{issue}"
+      },
+      "brief": {
+        "gate_example": "{pm} gate <PR>",
+        "focused_example": "{pm} typecheck",
+        "env_notes": {
+          "POSTGRES_HOST_PORT": "Host-side DB commands must use port $POSTGRES_HOST_PORT (export DATABASE_URL in this shell); never edit a shared or symlinked .env."
+        },
+        "_note": "Examples enter worker briefs; they do not run a gate. env_notes appear only for variables exported for this task."
+      },
+      "gate_runtime": "compose",
+      "staging": {
+        "_note": "Credential store names, not secrets. Supply a repo helper that reads credentials on stdin and writes browser storage state to {out}; placeholders must be whole arguments.",
+        "worktree_dir": ".worktrees/{issue}-staging",
+        "roles": [
+          "admin",
+          "viewer"
+        ],
+        "keychain_service": "web-app-staging-{role}",
+        "pass_entry": "web-app/staging/{role}",
+        "session_dir": "~/.cache/web-app-staging",
+        "session_cmd": "{pm} --silent session:create --role {role} --out {out}"
+      },
+      "pr": {
+        "_note": "Checkout used by gh pr list on the routing home, not a worker worktree. Omit to disable PR lookup for this project.",
+        "checkout": "/Users/you/projects/web-app"
+      },
+      "pipeline": [
+        "impl",
+        "review",
+        "gate",
+        "merge",
+        "deploy",
+        "staging"
+      ]
+    },
+    "mobile": {
+      "_note": "Native verification tasks request ios-simulator or android-emulator; those capabilities are available only on mac. Web-only tasks may still run on Linux.",
+      "issue_prefix": "MOB",
+      "tracker": "none",
+      "worktree": {
+        "kind": "git",
+        "dir": "{issue}",
+        "branch": "feature/{issue}"
+      },
+      "brief": {
+        "gate_example": "xcodebuild test -scheme Mobile -destination <simulator>",
+        "focused_example": "swift test"
+      },
+      "gate_runtime": "none",
+      "pipeline": [
+        "impl",
+        "review",
+        "merge"
+      ]
+    },
+    "infra": {
+      "_note": "Only linux advertises opentofu. Request it explicitly. This profile has no package manager, tracker, Compose runtime or staging login.",
+      "issue_prefix": "OPS",
+      "tracker": "none",
+      "worktree": {
+        "kind": "git",
+        "dir": "{issue}",
+        "branch": "feature/{issue}"
+      },
+      "brief": {
+        "gate_example": "tofu validate",
+        "focused_example": "tofu fmt -check"
+      },
+      "gate_runtime": "none",
+      "pipeline": [
+        "impl",
+        "review"
+      ]
+    }
+  }
+}

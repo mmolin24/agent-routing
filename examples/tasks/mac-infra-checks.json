@@ -1,0 +1,46 @@
+{
+  "contract_version": 1,
+  "task_id": "rt-infra-checks",
+  "summary": "EXAMPLE (dry-run only). Run example-infra's credential-free OpenTofu checks; routed to the Mac because only it has tofu.",
+  "authorization": {
+    "scope": "read-only",
+    "granted_by": "dev (example; not granted)",
+    "allowed": [
+      "git fetch"
+    ],
+    "forbidden": [
+      "tofu plan/apply or anything needing cloud credentials",
+      "edit files"
+    ]
+  },
+  "routing": {
+    "requested_host": null,
+    "requires": [
+      "opentofu"
+    ]
+  },
+  "repository": {
+    "name": "example-infra",
+    "remote": "https://github.com/example-org/example-infra.git"
+  },
+  "project_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "worktree": {
+    "strategy": "existing-checkout"
+  },
+  "worker": {
+    "kind": "codex",
+    "name": "rt-infra"
+  },
+  "mode": "command",
+  "commands": [
+    {
+      "cwd": "<WORKTREE>",
+      "run": "tofu fmt -check -recursive",
+      "mutating": false
+    }
+  ],
+  "resources": {
+    "timeout_minutes": 10
+  },
+  "stop_condition": "Stop after the check exits; report the exit code. Credential-free checks only, per the project's own guide."
+}

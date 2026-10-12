@@ -1,0 +1,71 @@
+# Real local configuration: everything in config/ except the example
+config/*
+!config/hosts.example.json
+*.local.json
+.env
+.env.*
+!.env.example
+.envrc
+.netrc
+.npmrc
+.pypirc
+.git-credentials
+kubeconfig
+
+# Secrets and key material — never belong in this repo
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+id_rsa*
+id_dsa*
+id_ed25519*
+id_ecdsa*
+*.kdbx
+*.jks
+*.keystore
+*.gpg
+*.asc
+*.age
+.ssh/
+.aws/
+.op/
+.gnupg/
+.kube/
+.docker/
+ssh_config
+secrets/
+credentials.json
+**/credentials
+*.credentials
+*.token
+
+# Sockets and SSH/agent runtime state
+*.sock
+*.socket
+ssh-agent*
+known_hosts
+known_hosts.old
+
+# Task runs, results, logs and session state
+runs/
+tests/golden.local/
+runs.migrated-*/
+logs/
+*.log
+*.log.*
+*.pid
+state/
+sessions/
+.herdr/
+
+# Editor / OS noise
+.DS_Store
+*.swp
+__pycache__/
+*.pyc
+
+# Go build output
+/collector/agent-collect
+.worktrees/

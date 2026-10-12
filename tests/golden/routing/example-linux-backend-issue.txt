@@ -1,0 +1,612 @@
+{
+  "argv": [
+    "<ROOT>/examples/tasks/linux-backend-issue.json",
+    "--config",
+    "<ROOT>/config/hosts.example.json",
+    "--active-dir",
+    "<ROOT>/runs/active",
+    "--json",
+    "--record",
+    "--run-preflight"
+  ],
+  "artifacts": {
+    "runs/active/rt-app9999-backend.json": {
+      "_occupies": {
+        "branch": "feature/APP-9999",
+        "host": "desktop",
+        "path": "/home/dev/projects/example-app/.worktrees/APP-9999"
+      },
+      "authorization": {
+        "allowed": [
+          "git fetch",
+          "the project's issue workflow up to the stop point, including its draft-PR flow"
+        ],
+        "forbidden": [
+          "force-push or push any branch but the task's own",
+          "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "project-workflow"
+      },
+      "contract_version": 1,
+      "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "notes": "Model/effort: set from the project's own guide when dispatching.",
+        "port_slot": 1,
+        "ports": [
+          3010,
+          5442,
+          8091,
+          43095
+        ],
+        "runtime": "compose",
+        "timeout_minutes": 90
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "linux",
+          "docker"
+        ]
+      },
+      "routing_ref": "<ROUTING_REF>",
+      "selected_host": "desktop",
+      "stop_condition": "One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.",
+      "summary": "EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.",
+      "task_id": "rt-app9999-backend",
+      "worker": {
+        "effort": null,
+        "kind": "codex",
+        "model": null,
+        "name": "rt-app9999"
+      },
+      "worktree": {
+        "deps": "link",
+        "env": "link",
+        "issue": "APP-9999",
+        "strategy": "pnpm-worktree-issue"
+      }
+    },
+    "runs/tasks/rt-app9999-backend/decision.json": {
+      "authorization_scope": "project-workflow",
+      "blockers": [],
+      "config": "config/hosts.example.json",
+      "env": {
+        "API_HOST_PORT": "3010",
+        "FRONTEND_HOST_PORT": "8091",
+        "POSTGRES_HOST_PORT": "5442",
+        "RUNTIME_SMOKE_IMAGE": "example-app-api-runtime:runtime-smoke-rt-app9999-backend",
+        "RUNTIME_SMOKE_PORT": "43095"
+      },
+      "execution_authorized": false,
+      "handoff_note": "# Task rt-app9999-backend: EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.\n\n## Routing (from agent-routing; not a workflow)\n- Host: desktop (Windows desktop, Ubuntu on WSL2. Linux builds, tests and Docker.)\n- Repository: /home/dev/projects/example-app at aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n- Work directory: /home/dev/projects/example-app/.worktrees/APP-9999\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n- Isolated runtime (port slot 1); these are already exported in your shell:\n  - `API_HOST_PORT=3010`\n  - `FRONTEND_HOST_PORT=8091`\n  - `POSTGRES_HOST_PORT=5442`\n  - `RUNTIME_SMOKE_PORT=43095`\n  - `RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend`\n  - Host-side DB commands must use port $POSTGRES_HOST_PORT (export DATABASE_URL in this shell); never edit a shared or symlinked .env.\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/projects/agent-routing/scripts/heavy`, e.g. `~/projects/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 3 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/desktop/.cache/agent-routing/reports/rt-app9999-backend`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\nThis machine is WSL: `/` can show free virtual-disk space even when the backing volume, Windows' C:, is full. A kernel I/O error, `SIGBUS`, a dockerd crash or containers vanishing mid-run is a **host fault**, not a test failure: run `df -h /mnt/c` and `dmesg | tail -20` (never `df /` as evidence), then stop and report `HOST_FAULT` with that output. Don't retry the step.\n\n## Workflow\nFollow `/home/dev/projects/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: project-workflow (granted by dev (example; not granted))\n- Allowed: git fetch\n- Allowed: the project's issue workflow up to the stop point, including its draft-PR flow\n- Forbidden: force-push or push any branch but the task's own\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+      "heavy": true,
+      "host_levels": {
+        "cpu": "ok",
+        "docker": "ok",
+        "hot": [],
+        "mem": "ok",
+        "overall": "ok",
+        "swap": "ok"
+      },
+      "host_load": {
+        "cores": 16,
+        "docker": "up",
+        "docker_limit": 15032385536,
+        "docker_used": 2147483648,
+        "load1": 1.0,
+        "mem_avail": 17179869184,
+        "mem_total": 25769803776,
+        "pressure": "normal",
+        "swap_total": 4294967296,
+        "swap_used": 0
+      },
+      "orchestrator_host": "desktop",
+      "plan": [
+        {
+          "commands": [
+            "herdr agent list",
+            "herdr workspace list"
+          ],
+          "step": "Discover live state on the target (IDs are per-server; never reuse)"
+        },
+        {
+          "commands": [],
+          "step": "Confirm no live agent is already named 'rt-app9999' and it has no open task"
+        },
+        {
+          "commands": [
+            "herdr tab create --workspace __ISSUE_WORKSPACE__ --cwd /home/dev/projects/example-app --label backend --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus",
+            "herdr workspace create --cwd /home/dev/projects/example-app --label APP-9999 --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus"
+          ],
+          "step": "Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+        },
+        {
+          "commands": [
+            "herdr pane run __ROOT_PANE__ 'pnpm worktree:issue APP-9999 -- --base aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --deps link --env link && builtin cd .worktrees/APP-9999 && pnpm issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'",
+            "herdr pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000",
+            "herdr pane read __ROOT_PANE__ --source recent-unwrapped --lines 80"
+          ],
+          "step": "Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit"
+        },
+        {
+          "commands": [
+            "herdr agent start rt-app9999 --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high"
+          ],
+          "step": "Start the worker in that shell pane (shell must be at its prompt)"
+        },
+        {
+          "commands": [
+            "b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr agent prompt rt-app9999 \"$b\" --wait --timeout 5400000"
+          ],
+          "step": "Put the brief (runs/tasks/rt-app9999-backend/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt"
+        },
+        {
+          "commands": [
+            "herdr agent get rt-app9999",
+            "herdr agent read rt-app9999 --source recent-unwrapped --lines 200"
+          ],
+          "step": "Collect output, then verify independently (idle != success)"
+        }
+      ],
+      "port_slot": 1,
+      "preflight": {
+        "blockers": "",
+        "commit_behind_ref": "origin/main 0",
+        "home": "<HOME>/desktop",
+        "kernel": "Microsoft WSL2",
+        "pnpm_version": "10.33.2",
+        "preflight_status": "ok",
+        "repo_dirty_tracked": "0",
+        "repo_last_fetch": "2026-10-12T12:00:00Z",
+        "repo_pnpm_pin": "10.33.2",
+        "repo_untracked": "0"
+      },
+      "preflight_command": "bash <ROOT>/scripts/preflight.sh --repo /home/dev/projects/example-app --expect-remote https://github.com/example-org/example-app.git --need-commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --tools 'git node pnpm docker codex' --herdr-bin '$HOME/.local/bin/herdr' --path-prepend '$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.3/bin' --worktree-at /home/dev/projects/example-app/.worktrees/APP-9999 --need-signing --ports-free '3010 5442 8091 43095'",
+      "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "queue_reasons": [],
+      "repository": "example-app",
+      "routing_ref": "<ROUTING_REF>",
+      "rule": "only host with ['docker', 'linux']",
+      "selected_host": "desktop",
+      "status": "routed",
+      "task_id": "rt-app9999-backend",
+      "warnings": []
+    },
+    "runs/tasks/rt-app9999-backend/handoff.md": "# Task rt-app9999-backend: EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.\n\n## Routing (from agent-routing; not a workflow)\n- Host: desktop (Windows desktop, Ubuntu on WSL2. Linux builds, tests and Docker.)\n- Repository: /home/dev/projects/example-app at aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n- Work directory: /home/dev/projects/example-app/.worktrees/APP-9999\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n- Isolated runtime (port slot 1); these are already exported in your shell:\n  - `API_HOST_PORT=3010`\n  - `FRONTEND_HOST_PORT=8091`\n  - `POSTGRES_HOST_PORT=5442`\n  - `RUNTIME_SMOKE_PORT=43095`\n  - `RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend`\n  - Host-side DB commands must use port $POSTGRES_HOST_PORT (export DATABASE_URL in this shell); never edit a shared or symlinked .env.\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/projects/agent-routing/scripts/heavy`, e.g. `~/projects/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 3 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/desktop/.cache/agent-routing/reports/rt-app9999-backend`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\nThis machine is WSL: `/` can show free virtual-disk space even when the backing volume, Windows' C:, is full. A kernel I/O error, `SIGBUS`, a dockerd crash or containers vanishing mid-run is a **host fault**, not a test failure: run `df -h /mnt/c` and `dmesg | tail -20` (never `df /` as evidence), then stop and report `HOST_FAULT` with that output. Don't retry the step.\n\n## Workflow\nFollow `/home/dev/projects/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: project-workflow (granted by dev (example; not granted))\n- Allowed: git fetch\n- Allowed: the project's issue workflow up to the stop point, including its draft-PR flow\n- Forbidden: force-push or push any branch but the task's own\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "runs/tasks/rt-app9999-backend/task.json": {
+      "authorization": {
+        "allowed": [
+          "git fetch",
+          "the project's issue workflow up to the stop point, including its draft-PR flow"
+        ],
+        "forbidden": [
+          "force-push or push any branch but the task's own",
+          "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "project-workflow"
+      },
+      "contract_version": 1,
+      "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "notes": "Model/effort: set from the project's own guide when dispatching.",
+        "port_slot": 1,
+        "ports": [
+          3010,
+          5442,
+          8091,
+          43095
+        ],
+        "runtime": "compose",
+        "timeout_minutes": 90
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "linux",
+          "docker"
+        ]
+      },
+      "routing_ref": "<ROUTING_REF>",
+      "selected_host": "desktop",
+      "stop_condition": "One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.",
+      "summary": "EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.",
+      "task_id": "rt-app9999-backend",
+      "worker": {
+        "effort": null,
+        "kind": "codex",
+        "model": null,
+        "name": "rt-app9999"
+      },
+      "worktree": {
+        "deps": "link",
+        "env": "link",
+        "issue": "APP-9999",
+        "strategy": "pnpm-worktree-issue"
+      }
+    }
+  },
+  "cli_output": {
+    "authorization_scope": "project-workflow",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "env": {
+      "API_HOST_PORT": "3010",
+      "FRONTEND_HOST_PORT": "8091",
+      "POSTGRES_HOST_PORT": "5442",
+      "RUNTIME_SMOKE_IMAGE": "example-app-api-runtime:runtime-smoke-rt-app9999-backend",
+      "RUNTIME_SMOKE_PORT": "43095"
+    },
+    "execution_authorized": false,
+    "handoff_note": "# Task rt-app9999-backend: EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.\n\n## Routing (from agent-routing; not a workflow)\n- Host: desktop (Windows desktop, Ubuntu on WSL2. Linux builds, tests and Docker.)\n- Repository: /home/dev/projects/example-app at aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n- Work directory: /home/dev/projects/example-app/.worktrees/APP-9999\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n- Isolated runtime (port slot 1); these are already exported in your shell:\n  - `API_HOST_PORT=3010`\n  - `FRONTEND_HOST_PORT=8091`\n  - `POSTGRES_HOST_PORT=5442`\n  - `RUNTIME_SMOKE_PORT=43095`\n  - `RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend`\n  - Host-side DB commands must use port $POSTGRES_HOST_PORT (export DATABASE_URL in this shell); never edit a shared or symlinked .env.\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/projects/agent-routing/scripts/heavy`, e.g. `~/projects/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 3 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/desktop/.cache/agent-routing/reports/rt-app9999-backend`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\nThis machine is WSL: `/` can show free virtual-disk space even when the backing volume, Windows' C:, is full. A kernel I/O error, `SIGBUS`, a dockerd crash or containers vanishing mid-run is a **host fault**, not a test failure: run `df -h /mnt/c` and `dmesg | tail -20` (never `df /` as evidence), then stop and report `HOST_FAULT` with that output. Don't retry the step.\n\n## Workflow\nFollow `/home/dev/projects/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: project-workflow (granted by dev (example; not granted))\n- Allowed: git fetch\n- Allowed: the project's issue workflow up to the stop point, including its draft-PR flow\n- Forbidden: force-push or push any branch but the task's own\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "heavy": true,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "host_load": {
+      "cores": 16,
+      "docker": "up",
+      "docker_limit": 15032385536,
+      "docker_used": 2147483648,
+      "load1": 1.0,
+      "mem_avail": 17179869184,
+      "mem_total": 25769803776,
+      "pressure": "normal",
+      "swap_total": 4294967296,
+      "swap_used": 0
+    },
+    "orchestrator_host": "desktop",
+    "plan": [
+      {
+        "commands": [
+          "herdr agent list",
+          "herdr workspace list"
+        ],
+        "step": "Discover live state on the target (IDs are per-server; never reuse)"
+      },
+      {
+        "commands": [],
+        "step": "Confirm no live agent is already named 'rt-app9999' and it has no open task"
+      },
+      {
+        "commands": [
+          "herdr tab create --workspace __ISSUE_WORKSPACE__ --cwd /home/dev/projects/example-app --label backend --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus",
+          "herdr workspace create --cwd /home/dev/projects/example-app --label APP-9999 --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus"
+        ],
+        "step": "Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+      },
+      {
+        "commands": [
+          "herdr pane run __ROOT_PANE__ 'pnpm worktree:issue APP-9999 -- --base aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --deps link --env link && builtin cd .worktrees/APP-9999 && pnpm issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'",
+          "herdr pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000",
+          "herdr pane read __ROOT_PANE__ --source recent-unwrapped --lines 80"
+        ],
+        "step": "Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit"
+      },
+      {
+        "commands": [
+          "herdr agent start rt-app9999 --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high"
+        ],
+        "step": "Start the worker in that shell pane (shell must be at its prompt)"
+      },
+      {
+        "commands": [
+          "b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr agent prompt rt-app9999 \"$b\" --wait --timeout 5400000"
+        ],
+        "step": "Put the brief (runs/tasks/rt-app9999-backend/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt"
+      },
+      {
+        "commands": [
+          "herdr agent get rt-app9999",
+          "herdr agent read rt-app9999 --source recent-unwrapped --lines 200"
+        ],
+        "step": "Collect output, then verify independently (idle != success)"
+      }
+    ],
+    "port_slot": 1,
+    "preflight": {
+      "blockers": "",
+      "commit_behind_ref": "origin/main 0",
+      "home": "<HOME>/desktop",
+      "kernel": "Microsoft WSL2",
+      "pnpm_version": "10.33.2",
+      "preflight_status": "ok",
+      "repo_dirty_tracked": "0",
+      "repo_last_fetch": "2026-10-12T12:00:00Z",
+      "repo_pnpm_pin": "10.33.2",
+      "repo_untracked": "0"
+    },
+    "preflight_command": "bash <ROOT>/scripts/preflight.sh --repo /home/dev/projects/example-app --expect-remote https://github.com/example-org/example-app.git --need-commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --tools 'git node pnpm docker codex' --herdr-bin '$HOME/.local/bin/herdr' --path-prepend '$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.3/bin' --worktree-at /home/dev/projects/example-app/.worktrees/APP-9999 --need-signing --ports-free '3010 5442 8091 43095'",
+    "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "queue_reasons": [],
+    "recorded": "runs/tasks/rt-app9999-backend",
+    "repository": "example-app",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "only host with ['docker', 'linux']",
+    "selected_host": "desktop",
+    "status": "routed",
+    "task_id": "rt-app9999-backend",
+    "warnings": []
+  },
+  "decision": {
+    "authorization_scope": "project-workflow",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "env": {
+      "API_HOST_PORT": "3010",
+      "FRONTEND_HOST_PORT": "8091",
+      "POSTGRES_HOST_PORT": "5442",
+      "RUNTIME_SMOKE_IMAGE": "example-app-api-runtime:runtime-smoke-rt-app9999-backend",
+      "RUNTIME_SMOKE_PORT": "43095"
+    },
+    "execution_authorized": false,
+    "handoff_note": "# Task rt-app9999-backend: EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.\n\n## Routing (from agent-routing; not a workflow)\n- Host: desktop (Windows desktop, Ubuntu on WSL2. Linux builds, tests and Docker.)\n- Repository: /home/dev/projects/example-app at aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n- Work directory: /home/dev/projects/example-app/.worktrees/APP-9999\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n- Isolated runtime (port slot 1); these are already exported in your shell:\n  - `API_HOST_PORT=3010`\n  - `FRONTEND_HOST_PORT=8091`\n  - `POSTGRES_HOST_PORT=5442`\n  - `RUNTIME_SMOKE_PORT=43095`\n  - `RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend`\n  - Host-side DB commands must use port $POSTGRES_HOST_PORT (export DATABASE_URL in this shell); never edit a shared or symlinked .env.\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/projects/agent-routing/scripts/heavy`, e.g. `~/projects/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 3 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/desktop/.cache/agent-routing/reports/rt-app9999-backend`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\nThis machine is WSL: `/` can show free virtual-disk space even when the backing volume, Windows' C:, is full. A kernel I/O error, `SIGBUS`, a dockerd crash or containers vanishing mid-run is a **host fault**, not a test failure: run `df -h /mnt/c` and `dmesg | tail -20` (never `df /` as evidence), then stop and report `HOST_FAULT` with that output. Don't retry the step.\n\n## Workflow\nFollow `/home/dev/projects/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: project-workflow (granted by dev (example; not granted))\n- Allowed: git fetch\n- Allowed: the project's issue workflow up to the stop point, including its draft-PR flow\n- Forbidden: force-push or push any branch but the task's own\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.\n\n## If you start another agent in a new Herdr pane\nName the agent `rt-<role>` (e.g. `rt-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "heavy": true,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "host_load": {
+      "cores": 16,
+      "docker": "up",
+      "docker_limit": 15032385536,
+      "docker_used": 2147483648,
+      "load1": 1.0,
+      "mem_avail": 17179869184,
+      "mem_total": 25769803776,
+      "pressure": "normal",
+      "swap_total": 4294967296,
+      "swap_used": 0
+    },
+    "orchestrator_host": "desktop",
+    "plan": [
+      {
+        "commands": [
+          "herdr agent list",
+          "herdr workspace list"
+        ],
+        "step": "Discover live state on the target (IDs are per-server; never reuse)"
+      },
+      {
+        "commands": [],
+        "step": "Confirm no live agent is already named 'rt-app9999' and it has no open task"
+      },
+      {
+        "commands": [
+          "herdr tab create --workspace __ISSUE_WORKSPACE__ --cwd /home/dev/projects/example-app --label backend --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus",
+          "herdr workspace create --cwd /home/dev/projects/example-app --label APP-9999 --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus"
+        ],
+        "step": "Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+      },
+      {
+        "commands": [
+          "herdr pane run __ROOT_PANE__ 'pnpm worktree:issue APP-9999 -- --base aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --deps link --env link && builtin cd .worktrees/APP-9999 && pnpm issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'",
+          "herdr pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000",
+          "herdr pane read __ROOT_PANE__ --source recent-unwrapped --lines 80"
+        ],
+        "step": "Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit"
+      },
+      {
+        "commands": [
+          "herdr agent start rt-app9999 --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high"
+        ],
+        "step": "Start the worker in that shell pane (shell must be at its prompt)"
+      },
+      {
+        "commands": [
+          "b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr agent prompt rt-app9999 \"$b\" --wait --timeout 5400000"
+        ],
+        "step": "Put the brief (runs/tasks/rt-app9999-backend/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt"
+      },
+      {
+        "commands": [
+          "herdr agent get rt-app9999",
+          "herdr agent read rt-app9999 --source recent-unwrapped --lines 200"
+        ],
+        "step": "Collect output, then verify independently (idle != success)"
+      }
+    ],
+    "port_slot": 1,
+    "preflight": {
+      "blockers": "",
+      "commit_behind_ref": "origin/main 0",
+      "home": "<HOME>/desktop",
+      "kernel": "Microsoft WSL2",
+      "pnpm_version": "10.33.2",
+      "preflight_status": "ok",
+      "repo_dirty_tracked": "0",
+      "repo_last_fetch": "2026-10-12T12:00:00Z",
+      "repo_pnpm_pin": "10.33.2",
+      "repo_untracked": "0"
+    },
+    "preflight_command": "bash <ROOT>/scripts/preflight.sh --repo /home/dev/projects/example-app --expect-remote https://github.com/example-org/example-app.git --need-commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --tools 'git node pnpm docker codex' --herdr-bin '$HOME/.local/bin/herdr' --path-prepend '$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.3/bin' --worktree-at /home/dev/projects/example-app/.worktrees/APP-9999 --need-signing --ports-free '3010 5442 8091 43095'",
+    "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "queue_reasons": [],
+    "recorded": "runs/tasks/rt-app9999-backend",
+    "repository": "example-app",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "only host with ['docker', 'linux']",
+    "selected_host": "desktop",
+    "status": "routed",
+    "task_id": "rt-app9999-backend",
+    "warnings": []
+  },
+  "exit_code": 0,
+  "helpers": {
+    "herdr_group": [
+      "APP-9999",
+      "backend"
+    ],
+    "issue_key": "APP-9999",
+    "runtime_env": {
+      "API_HOST_PORT": "3010",
+      "FRONTEND_HOST_PORT": "8091",
+      "POSTGRES_HOST_PORT": "5442",
+      "RUNTIME_SMOKE_IMAGE": "example-app-api-runtime:runtime-smoke-rt-app9999-backend",
+      "RUNTIME_SMOKE_PORT": "43095"
+    },
+    "setup_command": [
+      "pnpm worktree:issue APP-9999 -- --base aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --deps link --env link && builtin cd .worktrees/APP-9999 && pnpm issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"",
+      600000
+    ],
+    "task_step": "impl",
+    "worktree_dir": "/home/dev/projects/example-app/.worktrees/APP-9999",
+    "worktree_identity": [
+      "/home/dev/projects/example-app/.worktrees/APP-9999",
+      "feature/APP-9999"
+    ]
+  },
+  "human_output": "task:          rt-app9999-backend\nrouting_ref:   <ROUTING_REF>\norchestrator:  desktop\nselected host: desktop  (only host with ['docker', 'linux'])\nrepository:    example-app @ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nauthorization: project-workflow  — execution_authorized: NO (recommendation only)\nload class:    heavy (counts against max_heavy)\npreflight:\n  preflight_status=ok\n  blockers=\n  commit_behind_ref=origin/main 0\n  home=<HOME>/desktop\n  kernel=Microsoft WSL2\n  repo_last_fetch=2026-10-12T12:00:00Z\n  repo_dirty_tracked=0\n  repo_untracked=0\n  pnpm_version=10.33.2\n  repo_pnpm_pin=10.33.2\nruntime:       port slot 1: API_HOST_PORT=3010 FRONTEND_HOST_PORT=8091 POSTGRES_HOST_PORT=5442 RUNTIME_SMOKE_PORT=43095 RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend\nrecorded:      runs/tasks/rt-app9999-backend/ (task.json, decision.json, handoff.md) + active marker\ndry-run plan (fill __PLACEHOLDERS__ from live JSON responses; review every command; never paste one unfilled):\n  1. Discover live state on the target (IDs are per-server; never reuse)\n       $ herdr agent list\n       $ herdr workspace list\n  2. Confirm no live agent is already named 'rt-app9999' and it has no open task\n  3. Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it\n       $ herdr tab create --workspace __ISSUE_WORKSPACE__ --cwd /home/dev/projects/example-app --label backend --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus\n       $ herdr workspace create --cwd /home/dev/projects/example-app --label APP-9999 --env API_HOST_PORT=3010 --env FRONTEND_HOST_PORT=8091 --env POSTGRES_HOST_PORT=5442 --env RUNTIME_SMOKE_PORT=43095 --env RUNTIME_SMOKE_IMAGE=example-app-api-runtime:runtime-smoke-rt-app9999-backend --no-focus\n  4. Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit\n       $ herdr pane run __ROOT_PANE__ 'pnpm worktree:issue APP-9999 -- --base aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --deps link --env link && builtin cd .worktrees/APP-9999 && pnpm issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'\n       $ herdr pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000\n       $ herdr pane read __ROOT_PANE__ --source recent-unwrapped --lines 80\n  5. Start the worker in that shell pane (shell must be at its prompt)\n       $ herdr agent start rt-app9999 --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high\n  6. Put the brief (runs/tasks/rt-app9999-backend/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt\n       $ b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr agent prompt rt-app9999 \"$b\" --wait --timeout 5400000\n  7. Collect output, then verify independently (idle != success)\n       $ herdr agent get rt-app9999\n       $ herdr agent read rt-app9999 --source recent-unwrapped --lines 200\nstatus:        ROUTED\n",
+  "preflight_calls": [
+    {
+      "argv": [
+        "bash",
+        "<ROOT>/scripts/preflight.sh",
+        "--repo",
+        "/home/dev/projects/example-app",
+        "--expect-remote",
+        "https://github.com/example-org/example-app.git",
+        "--need-commit",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "--tools",
+        "git node pnpm docker codex",
+        "--herdr-bin",
+        "$HOME/.local/bin/herdr",
+        "--path-prepend",
+        "$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.3/bin",
+        "--worktree-at",
+        "/home/dev/projects/example-app/.worktrees/APP-9999",
+        "--need-signing",
+        "--ports-free",
+        "3010 5442 8091 43095"
+      ],
+      "stdin_path": null
+    }
+  ],
+  "resolve_calls": [],
+  "stderr": "",
+  "task_after_decide": {
+    "authorization": {
+      "allowed": [
+        "git fetch",
+        "the project's issue workflow up to the stop point, including its draft-PR flow"
+      ],
+      "forbidden": [
+        "force-push or push any branch but the task's own",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "granted_by": "dev (example; not granted)",
+      "scope": "project-workflow"
+    },
+    "contract_version": 1,
+    "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "repository": {
+      "name": "example-app",
+      "remote": "https://github.com/example-org/example-app.git"
+    },
+    "resources": {
+      "notes": "Model/effort: set from the project's own guide when dispatching.",
+      "runtime": "compose",
+      "timeout_minutes": 90
+    },
+    "routing": {
+      "requested_host": null,
+      "requires": [
+        "linux",
+        "docker"
+      ]
+    },
+    "stop_condition": "One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.",
+    "summary": "EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.",
+    "task_id": "rt-app9999-backend",
+    "worker": {
+      "effort": null,
+      "kind": "codex",
+      "model": null,
+      "name": "rt-app9999"
+    },
+    "worktree": {
+      "deps": "link",
+      "env": "link",
+      "issue": "APP-9999",
+      "strategy": "pnpm-worktree-issue"
+    }
+  },
+  "task_before_decide": {
+    "authorization": {
+      "allowed": [
+        "git fetch",
+        "the project's issue workflow up to the stop point, including its draft-PR flow"
+      ],
+      "forbidden": [
+        "force-push or push any branch but the task's own",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "granted_by": "dev (example; not granted)",
+      "scope": "project-workflow"
+    },
+    "contract_version": 1,
+    "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "repository": {
+      "name": "example-app",
+      "remote": "https://github.com/example-org/example-app.git"
+    },
+    "resources": {
+      "notes": "Model/effort: set from the project's own guide when dispatching.",
+      "runtime": "compose",
+      "timeout_minutes": 90
+    },
+    "routing": {
+      "requested_host": null,
+      "requires": [
+        "linux",
+        "docker"
+      ]
+    },
+    "stop_condition": "One draft PR targeting main, per the project's workflow; report PR URL, branch and exact head SHA.",
+    "summary": "EXAMPLE (dry-run only; APP-9999 is a placeholder). Backend issue that needs a running Compose stack, routed to the desktop with an isolated port slot.",
+    "task_id": "rt-app9999-backend",
+    "worker": {
+      "effort": null,
+      "kind": "codex",
+      "model": null,
+      "name": "rt-app9999"
+    },
+    "worktree": {
+      "deps": "link",
+      "env": "link",
+      "issue": "APP-9999",
+      "strategy": "pnpm-worktree-issue"
+    }
+  }
+}

@@ -1,0 +1,392 @@
+{
+  "argv": [
+    "--issue",
+    "APP-9999",
+    "--grant",
+    "local-only",
+    "--heavy",
+    "--host",
+    "desktop",
+    "--config",
+    "<ROOT>/config/hosts.example.json",
+    "--active-dir",
+    "<ROOT>/runs/active",
+    "--json",
+    "--record",
+    "--run-preflight"
+  ],
+  "artifacts": {
+    "runs/queue/desktop/1791806400000000000-app9999-impl.json": {
+      "_resolved_ref": "origin/main",
+      "authorization": {
+        "allowed": [
+          "git fetch",
+          "edit and test in the task's own worktree"
+        ],
+        "forbidden": [
+          "commit, push or open PRs",
+          "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev",
+        "scope": "worktree-write"
+      },
+      "contract_version": 1,
+      "project_commit": "1234567890abcdef1234567890abcdef12345678",
+      "queued_at": "2026-10-12T12:00:00Z",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "class": "heavy",
+        "ports": [],
+        "runtime": "none",
+        "timeout_minutes": 120
+      },
+      "routing": {
+        "requested_host": "desktop",
+        "requires": []
+      },
+      "routing_ref": "<ROUTING_REF>",
+      "selected_host": "desktop",
+      "stop_condition": "Implementation plus local verification per the project's workflow; no commits.",
+      "summary": "APP-9999",
+      "task_id": "app9999-impl",
+      "worker": {
+        "effort": null,
+        "kind": "codex",
+        "model": null,
+        "name": "app9999-impl"
+      },
+      "worktree": {
+        "deps": "link",
+        "env": "link",
+        "issue": "APP-9999",
+        "strategy": "pnpm-worktree-issue"
+      }
+    },
+    "runs/queue/desktop/1791806400000000000-fixture-waiting.json": {
+      "authorization": {
+        "allowed": [
+          "git fetch in /home/dev/projects/example-app (remote-tracking refs only)",
+          "create issue worktree .worktrees/APP-9999",
+          "install/link deps in that worktree",
+          "run listed commands"
+        ],
+        "forbidden": [
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "push",
+          "open PR",
+          "deploy",
+          "tofu apply",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "worktree-write"
+      },
+      "commands": [
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm issue:check APP-9999"
+        },
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm test:unit"
+        }
+      ],
+      "contract_version": 1,
+      "mode": "command",
+      "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "class": "heavy",
+        "compose_project": null,
+        "database": null,
+        "notes": "Unit tests only; no Compose stack, so no port/database reservations.",
+        "ports": [],
+        "timeout_minutes": 30
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "linux"
+        ]
+      },
+      "stop_condition": "Stop after pnpm test:unit exits once. Do not fix failures, edit files, commit or push. Report and go idle.",
+      "summary": "EXAMPLE (dry-run only). Run backend unit tests at an exact commit in an issue worktree; a plain command run, no agent.",
+      "task_id": "fixture-waiting",
+      "worker": {
+        "kind": "codex",
+        "name": "fixture-waiting"
+      },
+      "worktree": {
+        "deps": "link",
+        "issue": "APP-863",
+        "strategy": "pnpm-worktree-issue"
+      }
+    }
+  },
+  "cli_output": {
+    "authorization_scope": "worktree-write",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "execution_authorized": false,
+    "heavy": true,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "host_load": {
+      "cores": 16,
+      "docker": "up",
+      "docker_limit": 15032385536,
+      "docker_used": 2147483648,
+      "load1": 1.0,
+      "mem_avail": 17179869184,
+      "mem_total": 25769803776,
+      "pressure": "normal",
+      "swap_total": 4294967296,
+      "swap_used": 0
+    },
+    "orchestrator_host": "desktop",
+    "project_commit": "1234567890abcdef1234567890abcdef12345678",
+    "queue_position": 2,
+    "queue_reasons": [
+      "1 heavy task(s) already queued on desktop (first in, first out)"
+    ],
+    "repository": "example-app",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "explicit host request honored; origin/main resolved on desktop as of its last fetch",
+    "selected_host": "desktop",
+    "status": "queued",
+    "task_id": "app9999-impl",
+    "warnings": []
+  },
+  "decision": {
+    "authorization_scope": "worktree-write",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "execution_authorized": false,
+    "heavy": true,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "host_load": {
+      "cores": 16,
+      "docker": "up",
+      "docker_limit": 15032385536,
+      "docker_used": 2147483648,
+      "load1": 1.0,
+      "mem_avail": 17179869184,
+      "mem_total": 25769803776,
+      "pressure": "normal",
+      "swap_total": 4294967296,
+      "swap_used": 0
+    },
+    "orchestrator_host": "desktop",
+    "project_commit": "1234567890abcdef1234567890abcdef12345678",
+    "queue_position": 2,
+    "queue_reasons": [
+      "1 heavy task(s) already queued on desktop (first in, first out)"
+    ],
+    "repository": "example-app",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "explicit host request honored; origin/main resolved on desktop as of its last fetch",
+    "selected_host": "desktop",
+    "status": "queued",
+    "task_id": "app9999-impl",
+    "warnings": []
+  },
+  "exit_code": 4,
+  "helpers": {
+    "handoff_note": "# Task app9999-impl: APP-9999\n\n## Routing (from agent-routing; not a workflow)\n- Host: desktop (Windows desktop, Ubuntu on WSL2. Linux builds, tests and Docker.)\n- Repository: /home/dev/projects/example-app at 1234567890abcdef1234567890abcdef12345678\n- Work directory: /home/dev/projects/example-app/.worktrees/APP-9999\n- pnpm: use `pnpm`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/projects/agent-routing/scripts/heavy`, e.g. `~/projects/agent-routing/scripts/heavy pnpm ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 3 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`$HOME/.cache/agent-routing/reports/app9999-impl`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/home/dev/projects/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: worktree-write (granted by dev)\n- Allowed: git fetch\n- Allowed: edit and test in the task's own worktree\n- Forbidden: commit, push or open PRs\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: Implementation plus local verification per the project's workflow; no commits.\n\n## If you start another agent in a new Herdr pane\nName the agent `app9999-<role>` (e.g. `app9999-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "herdr_group": [
+      "APP-9999",
+      "impl"
+    ],
+    "issue_key": "APP-9999",
+    "plan": [
+      [
+        "Discover live state on the target (IDs are per-server; never reuse)",
+        [
+          "herdr agent list",
+          "herdr workspace list"
+        ]
+      ],
+      [
+        "Confirm no live agent is already named 'app9999-impl' and it has no open task",
+        []
+      ],
+      [
+        "Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it",
+        [
+          "herdr tab create --workspace __ISSUE_WORKSPACE__ --cwd /home/dev/projects/example-app --label impl --no-focus",
+          "herdr workspace create --cwd /home/dev/projects/example-app --label APP-9999 --no-focus"
+        ]
+      ],
+      [
+        "Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit",
+        [
+          "herdr pane run __ROOT_PANE__ 'pnpm worktree:issue APP-9999 -- --base 1234567890abcdef1234567890abcdef12345678 --deps link --env link && builtin cd .worktrees/APP-9999 && pnpm issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'",
+          "herdr pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000",
+          "herdr pane read __ROOT_PANE__ --source recent-unwrapped --lines 80"
+        ]
+      ],
+      [
+        "Start the worker in that shell pane (shell must be at its prompt)",
+        [
+          "herdr agent start app9999-impl --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high"
+        ]
+      ],
+      [
+        "Put the brief (runs/tasks/app9999-impl/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt",
+        [
+          "b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr agent prompt app9999-impl \"$b\" --wait --timeout 7200000"
+        ]
+      ],
+      [
+        "Collect output, then verify independently (idle != success)",
+        [
+          "herdr agent get app9999-impl",
+          "herdr agent read app9999-impl --source recent-unwrapped --lines 200"
+        ]
+      ]
+    ],
+    "setup_command": [
+      "pnpm worktree:issue APP-9999 -- --base 1234567890abcdef1234567890abcdef12345678 --deps link --env link && builtin cd .worktrees/APP-9999 && pnpm issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"",
+      600000
+    ],
+    "task_step": "impl",
+    "worktree_dir": "/home/dev/projects/example-app/.worktrees/APP-9999",
+    "worktree_identity": [
+      "/home/dev/projects/example-app/.worktrees/APP-9999",
+      "feature/APP-9999"
+    ]
+  },
+  "human_output": "task:          app9999-impl\nrouting_ref:   <ROUTING_REF>\norchestrator:  desktop\nselected host: desktop  (explicit host request honored; origin/main resolved on desktop as of its last fetch)\nrepository:    example-app @ 1234567890abcdef1234567890abcdef12345678\nauthorization: worktree-write  — execution_authorized: NO (recommendation only)\nload class:    heavy (counts against max_heavy)\nwaits for:     1 heavy task(s) already queued on desktop (first in, first out)\nqueued:        position 2 on desktop (start it later with --next; nothing runs in the background)\nstatus:        QUEUED\n",
+  "preflight_calls": [],
+  "resolve_calls": [
+    {
+      "host": "desktop",
+      "orchestrator": "desktop",
+      "ref": "origin/main"
+    }
+  ],
+  "stderr": "",
+  "task_after_decide": {
+    "_resolved_ref": "origin/main",
+    "authorization": {
+      "allowed": [
+        "git fetch",
+        "edit and test in the task's own worktree"
+      ],
+      "forbidden": [
+        "commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "granted_by": "dev",
+      "scope": "worktree-write"
+    },
+    "contract_version": 1,
+    "project_commit": "1234567890abcdef1234567890abcdef12345678",
+    "repository": {
+      "name": "example-app",
+      "remote": "https://github.com/example-org/example-app.git"
+    },
+    "resources": {
+      "class": "heavy",
+      "ports": [],
+      "runtime": "none",
+      "timeout_minutes": 120
+    },
+    "routing": {
+      "requested_host": "desktop",
+      "requires": []
+    },
+    "stop_condition": "Implementation plus local verification per the project's workflow; no commits.",
+    "summary": "APP-9999",
+    "task_id": "app9999-impl",
+    "worker": {
+      "effort": null,
+      "kind": "codex",
+      "model": null,
+      "name": "app9999-impl"
+    },
+    "worktree": {
+      "deps": "link",
+      "env": "link",
+      "issue": "APP-9999",
+      "strategy": "pnpm-worktree-issue"
+    }
+  },
+  "task_before_decide": {
+    "_commit_ref": "origin/main",
+    "authorization": {
+      "allowed": [
+        "git fetch",
+        "edit and test in the task's own worktree"
+      ],
+      "forbidden": [
+        "commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "granted_by": "dev",
+      "scope": "worktree-write"
+    },
+    "contract_version": 1,
+    "project_commit": "0000000000000000000000000000000000000000",
+    "repository": {
+      "name": "example-app",
+      "remote": "https://github.com/example-org/example-app.git"
+    },
+    "resources": {
+      "class": "heavy",
+      "ports": [],
+      "runtime": "none",
+      "timeout_minutes": 120
+    },
+    "routing": {
+      "requested_host": "desktop",
+      "requires": []
+    },
+    "stop_condition": "Implementation plus local verification per the project's workflow; no commits.",
+    "summary": "APP-9999",
+    "task_id": "app9999-impl",
+    "worker": {
+      "effort": null,
+      "kind": "codex",
+      "model": null,
+      "name": "app9999-impl"
+    },
+    "worktree": {
+      "deps": "link",
+      "env": "link",
+      "issue": "APP-9999",
+      "strategy": "pnpm-worktree-issue"
+    }
+  }
+}

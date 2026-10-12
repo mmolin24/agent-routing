@@ -1,0 +1,17 @@
+2026-10-12T12:00:00Z OVERTIME app9001-impl on desktop: working 135 min against a 120 min timeout: check its progress (route --listen app9001-impl --handoff); ask the human whether to extend or stop it
+2026-10-12T12:00:00Z UNPUSHED app9001-impl on desktop: 3 commit(s) unpushed for 70 min (2 dirty files); its grant asks for a checkpoint push every 60 min: remind it at its next stop
+2026-10-12T12:00:00Z BLOCKED  app9002-gate on mac: answer it within its grant (route --blocked)
+2026-10-12T12:00:00Z NO_WORKER app9012-impl on desktop: open 20 min with no worker (no worker agent on its host); it holds its slot with nothing running: inspect (route --listen app9012-impl), then --close it and route it again with --dispatch
+2026-10-12T12:00:00Z NO_WORKER standalone-audit on desktop: open 25 min with no worker (never dispatched (recorded only, or its plan run by hand)); it holds its slot with nothing running: inspect (route --listen standalone-audit), then --close it and route it again with --dispatch
+2026-10-12T12:00:00Z REAP     APP-9005: 1 leftover agent(s) on desktop (PR #4005 merged): list with route --reap, close their tabs with --reap --apply
+2026-10-12T12:00:00Z REAP     APP-9006: 1 leftover agent(s) on mac (PR #4006 merged): list with route --reap, close their tabs with --reap --apply
+2026-10-12T12:00:00Z REAP     APP-9007: 1 leftover agent(s) on desktop (PR #4007 merged): list with route --reap, close their tabs with --reap --apply
+2026-10-12T12:00:00Z REAP     APP-9015: 1 leftover agent(s) on desktop (no open task for 40 h): list with route --reap, close their tabs with --reap --apply
+2026-10-12T12:00:00Z REAP     APP-9016: 1 leftover agent(s) on mac (Linear done): list with route --reap, close their tabs with --reap --apply
+2026-10-12T12:00:00Z STALE    APP-9001 review: approved before the current fix round
+2026-10-12T12:00:00Z STALE_BASE APP-9010 #4010: its base feature/APP-9005 (#4005) was merged: restack it onto main or retarget the PR before more work
+2026-10-12T12:00:00Z STALE    APP-9009 review: approved on 9c842a7d, PR head is now 6f63f93a: re-run
+2026-10-12T12:00:00Z CI_FAIL  APP-9009 #4009: 1 failing check(s)
+2026-10-12T12:00:00Z FAIL     APP-9004 gate: failed · offline gate evidence
+2026-10-12T12:00:00Z DRAIN    desktop has 1 queued and a free slot: route --next --dispatch
+2026-10-12T12:00:00Z DRAIN    mac has 2 queued and a free slot: route --next --dispatch

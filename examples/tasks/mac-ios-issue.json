@@ -1,0 +1,52 @@
+{
+  "contract_version": 1,
+  "task_id": "rt-app9998-ios",
+  "summary": "EXAMPLE (dry-run only; APP-9998 is a placeholder). iOS simulator verification routed to the Mac; the project's iOS issue-work skill owns the steps and evidence.",
+  "authorization": {
+    "scope": "worktree-write",
+    "granted_by": "dev (example; not granted)",
+    "allowed": [
+      "git fetch",
+      "create the issue worktree and run the project's verification for this platform"
+    ],
+    "forbidden": [
+      "edit tracked files, commit, push or open PRs",
+      "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+      "git pull/reset/clean/checkout/stash in the main checkout",
+      "stop other agents",
+      "change security settings"
+    ]
+  },
+  "routing": {
+    "requested_host": null,
+    "requires": [
+      "macos",
+      "xcode",
+      "ios-simulator"
+    ]
+  },
+  "repository": {
+    "name": "example-app",
+    "remote": "https://github.com/example-org/example-app.git"
+  },
+  "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "worktree": {
+    "strategy": "pnpm-worktree-issue",
+    "issue": "APP-9998",
+    "deps": "install",
+    "env": "link"
+  },
+  "worker": {
+    "kind": "codex",
+    "name": "rt-app9998",
+    "model": null,
+    "effort": null
+  },
+  "resources": {
+    "timeout_minutes": 60,
+    "ports": [
+      8081
+    ]
+  },
+  "stop_condition": "Simulator evidence recorded per the project's iOS skill, or an exact blocker; no commits."
+}

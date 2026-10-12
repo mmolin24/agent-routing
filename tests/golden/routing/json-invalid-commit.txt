@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "<ROOT>/inputs/json-invalid-commit.json",
+    "--config",
+    "<ROOT>/config/hosts.example.json",
+    "--active-dir",
+    "<ROOT>/runs/active",
+    "--json",
+    "--record",
+    "--run-preflight"
+  ],
+  "artifacts": {},
+  "cli_output": {
+    "errors": [
+      "project_commit must be an exact 40-hex commit, not a branch name"
+    ],
+    "status": "invalid",
+    "task": "<ROOT>/inputs/json-invalid-commit.json"
+  },
+  "exit_code": 2,
+  "preflight_calls": [],
+  "resolve_calls": [],
+  "stderr": ""
+}

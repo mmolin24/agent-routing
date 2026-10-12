@@ -1,0 +1,60 @@
+ AGENT ROUTING 13:01:00  ·  data 0s old, refresh 5s  ·  Ctrl+C quits
+ 5 open   1 working   0 blocked   3 queued
+ ⚠ HOST RESET mac: 2 task(s) interrupted · route.py --status
+ ⚠ NO WORKER app9012-impl on desktop (no worker agent on its host, 81 min): holds its slot · route.py --status
+ ⚠ NO WORKER standalone-audit on desktop (never dispatched (recorded only, or its plan run by hand), 86 min): holds its slot · route.py --status
+ USAGE  codex pro 5h 32% (resets in -0h) · week 92% (resets Wed 12:00) · credits 12.3k · as of 1h ago
+        claude 5h 23% (resets in 2h) · as of 3h ago
+
+ ISSUES  13 open · 0 merged · 0 completed (14 days)
+ ▾ APP-9001  Widget <preview> & "quotes"  impl ◌ › review ✓ › gate · › merge · › deploy · › staging ·  → impl worker stopped: read it
+        impl    ◌ worker stopped on desktop: read its output   desktop · app9001-impl
+        review  ✓ approved · offline review evidence   1h ago
+        Linear  Linear: in-progress (from the pipeline)
+ ▸ APP-9011  Synthetic view task  impl ? › review · › gate · › merge · › deploy · › staging ·  → impl: no result recorded
+ ▸ APP-9012  Synthetic view task  impl ? › review · › gate · › merge · › deploy · › staging ·  → impl: no result recorded
+ ▸ APP-9013    impl ⧗ › review · › gate ⧗ › merge · › deploy · › staging ·
+ ▸ APP-9016    impl · › review · › gate · › merge · › deploy · › staging ·
+ ▸ APP-9010  Synthetic view task  impl ✓ › review ⠋ › gate · › merge · › deploy · › staging ·
+ ▸ APP-9002  Synthetic view task  impl ✓ › review ✓ › gate ? › merge · › deploy · › staging ·  → gate: no result recorded
+ ▾ APP-9009  Synthetic view task  impl ✓ › review ✓ › gate ⧗ › merge · › deploy · › staging ·
+        impl    ✓ done   desktop · app9009-impl · 10h ago
+        review  ✓ approved   desktop · app9009-review · 3h ago
+        gate    ⧗ queued #1 on desktop   desktop · app9009-gate
+        Linear  Linear: in-progress (from the pipeline)
+ ▸ APP-9004  Synthetic view task  impl ✓ › review ✓ › gate ✗ › merge · › deploy · › staging ·  → gate failed
+ ▸ APP-9003  Synthetic view task  impl ✓ › review ✓ › gate ✓ › merge · › deploy · › staging ·
+ ▸ APP-9006  Synthetic view task  impl ✓ › review ✓ › gate ✓ › merge · › deploy ✓ › staging ·
+ ▸ APP-9007  Synthetic view task  impl ✓ › review ✓ › gate ✓ › merge · › deploy ✓ › staging ✓
+
+ ORCHESTRATORS  ⠋ orchestrator (desktop)  gpt-6.1-sol high · working
+ │  └─ ◇ APP-9010 review #4010  subagent · working
+ │  ↓ desktop   ↓ mac
+
+ MAINTAINER  ● routing-maintainer (desktop)  gpt-6.1-sol high · idle · inbox 1 waiting, 1 fixed today
+
+ DESKTOP · Ubuntu on WSL2                                                                                                                                                          
+ heavy ▰▱▱ 1/3   queue 1/6   light 2   slots 0/3 · 1 waiting: app9001-impl (pnpm typecheck)                                                                                        
+ ● cpu ▰▰▱▱▱▱ 4.0/16  mem ▰▰▱▱▱▱ 16.0G free  swap 0.0/4.0G  docker 2.0/14.0G (3)                                                                                                   
+ ├─ ◆ APP-9001  Widget <preview> & "quotes"  light  app9001-impl · APP-9001 › impl                                                                                                 
+ │  └── ● impl  gpt-6.1-sol high · done                                                                                                                                            
+ │      └─ ⠋ review-child  Opus 5.5 medium ⚡fast · working                                                                                                                         
+ │         ├─ ● test-child  gpt-6.1-sol high · done                                                                                                                                
+ │         └─ ◇ Check widget boundaries  explore subagent · working                                                                                                                
+ │            └─ ◇ Check nested edge case  subagent · done                                                                                                                         
+ ├─ ◆ APP-9012  Synthetic view task  heavy  app9012-impl · APP-9012 › impl                                                                                                         
+ ├─ ◆ standalone-audit  Audit routing docs  light  standalone-audit · standalone-audit › impl · open                                                                               
+ └─ ○ app9009-gate  queued #1                                                                                                                                                      
+ not routed: 8 idle agents hidden                                                                                                                                                  
+
+ MAC · macOS                                                                                                                                                                       
+ heavy ▰▱ 1/2   queue 2/6   light 1   slots 1/2                                                                                                                                    
+ ● cpu ▰▰▰▰▰▱ 12.0/15  mem ▰▰▱▱▱▱ 16.0G free pressure critical  swap 0.0/4.0G  docker down  HOT: heavy work queues here                                                            
+ ├─ ◆ APP-9002  Synthetic view task  heavy  app9002-gate · APP-9002 › gate                                                                                                         
+ │  └── ● gate  gpt-6.1-sol high · done                                                                                                                                            
+ ├─ ◆ APP-9011  Synthetic view task  light  app9011-impl · APP-9011 › impl                                                                                                         
+ ├─ ○ app9013-impl  queued #1                                                                                                                                                      
+ └─ ○ app9013-gate  queued #2                                                                                                                                                      
+ not routed: scratch-helper (gpt-6.1-sol high, working)                                                                                                                            
+ not routed: 2 idle agents hidden                                                                                                                                                  
+

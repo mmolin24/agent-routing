@@ -1,0 +1,65 @@
+{
+  "contract_version": 1,
+  "task_id": "rt-20261008-conflict",
+  "summary": "NEGATIVE EXAMPLE: iOS work explicitly requested on the desktop. Must block, not switch hosts.",
+  "authorization": {
+    "scope": "worktree-write",
+    "granted_by": "dev (example; not granted)",
+    "allowed": [
+      "git fetch in /home/dev/projects/example-app (remote-tracking refs only)",
+      "create issue worktree .worktrees/APP-9999",
+      "install/link deps in that worktree",
+      "run listed commands"
+    ],
+    "forbidden": [
+      "git pull/reset/clean/checkout/stash in the main checkout",
+      "push",
+      "open PR",
+      "deploy",
+      "tofu apply",
+      "stop other agents",
+      "change security settings"
+    ]
+  },
+  "routing": {
+    "requested_host": "desktop",
+    "requires": [
+      "ios-simulator"
+    ]
+  },
+  "repository": {
+    "name": "example-app",
+    "remote": "https://github.com/example-org/example-app.git"
+  },
+  "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "worktree": {
+    "strategy": "pnpm-worktree-issue",
+    "issue": "APP-9999",
+    "deps": "link"
+  },
+  "worker": {
+    "kind": "codex",
+    "name": "rt-conflict"
+  },
+  "mode": "agent",
+  "commands": [
+    {
+      "cwd": "<WORKTREE>",
+      "run": "pnpm issue:check APP-9999",
+      "mutating": false
+    },
+    {
+      "cwd": "<WORKTREE>",
+      "run": "pnpm test:unit",
+      "mutating": false
+    }
+  ],
+  "resources": {
+    "timeout_minutes": 30,
+    "ports": [],
+    "compose_project": null,
+    "database": null,
+    "notes": "Unit tests only; no Compose stack, so no port/database reservations."
+  },
+  "stop_condition": "Stop after pnpm test:unit exits once. Do not fix failures, edit files, commit or push. Report and go idle."
+}

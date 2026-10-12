@@ -1,0 +1,10 @@
+2026-10-12T13:00:00Z HOST_RESET mac restarted at 12:55Z: every process on it died (workers, children, containers); 2 open task(s) interrupted: app9002-gate, app9011-impl; re-dispatch only with the human's OK
+2026-10-12T13:00:00Z STOPPED  app9001-impl on desktop: read its output (route --listen app9001-impl); idle isn't success
+2026-10-12T13:00:00Z STILL_STOPPED app9001-impl on desktop: stopped 35 min ago and task app9001-impl is still open: read it (route --listen app9001-impl) and close it or start its next round
+2026-10-12T13:00:00Z INTERRUPTED app9002-gate on mac: its host restarted at 12:55Z while it was open (dispatched @ 6f63f93a6f63): inspect its worktree (unpushed work, reports), record it, then --close app9002-gate --outcome interrupted; re-dispatch only with the human's OK
+2026-10-12T13:00:00Z INTERRUPTED app9011-impl on mac: its host restarted at 12:55Z while it was open (dispatched @ 6f63f93a6f63): inspect its worktree (unpushed work, reports), record it, then --close app9011-impl --outcome interrupted; re-dispatch only with the human's OK
+2026-10-12T13:00:00Z STALE    APP-9002 gate: worker stopped on mac: read its output (testing 6f63f93a, PR head is 9c842a7d)
+2026-10-12T13:00:00Z STALE    APP-9002 review: approved on 6f63f93a, PR head is now 9c842a7d: re-run
+2026-10-12T13:00:00Z CI_PASS  APP-9009 #4009
+2026-10-12T13:00:00Z MERGED   APP-9003 #4003
+2026-10-12T13:00:00Z GPG_LOCKED the routing home's GPG agent has no passphrase (lost on restart): signed commits, pushes and merges fail and draft-pr is blocked; ask the human to run, in their own terminal: echo test | gpg --clearsign >/dev/null

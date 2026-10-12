@@ -1,0 +1,13 @@
+    1     0 10-00:00:00   1000 /sbin/launchd
+   16     1 02:00:00     500 Relay(17)       /init
+  500     1 04-08:51:24   2560 npm exec pnpm@10.33.2 exec expo start --web --localhost --clear --port 8851
+  501   500 04-08:51:24   1552 node /x/pnpm exec expo start --web --localhost --clear --port 8851
+  502   501 04-08:51:24   6464 node ./node_modules/.bin/expo start --web --port=8851
+  503   502 04-08:51:20  90000 node worker.js
+  600    16    01:22:33   3000 node ./node_modules/.bin/vite --port 5173
+  700   999       05:00   4000 node ./node_modules/.bin/expo start --port 8081
+  999     1    10:00:00   2000 -zsh
+  800     1       00:42   1000 /usr/bin/python3 server.py
+  900     1       01:00   1000 node /x/metro-app/server.js
+  901     1       01:00   1000 node ./node_modules/.bin/expo   start   --port  9000
+  garbage line

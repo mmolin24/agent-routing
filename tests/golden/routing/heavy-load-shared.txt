@@ -1,0 +1,736 @@
+{
+  "argv": [
+    "--issue",
+    "APP-9999",
+    "--grant",
+    "local-only",
+    "--heavy",
+    "--requires",
+    "web",
+    "--config",
+    "<ROOT>/config/hosts.example.json",
+    "--active-dir",
+    "<ROOT>/runs/active",
+    "--json",
+    "--record",
+    "--run-preflight"
+  ],
+  "artifacts": {
+    "runs/active/app9999-impl.json": {
+      "_occupies": {
+        "branch": "feature/APP-9999",
+        "host": "mac",
+        "path": "/Users/dev/example-app/.worktrees/APP-9999"
+      },
+      "_resolved_ref": "origin/main",
+      "authorization": {
+        "allowed": [
+          "git fetch",
+          "edit and test in the task's own worktree"
+        ],
+        "forbidden": [
+          "commit, push or open PRs",
+          "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev",
+        "scope": "worktree-write"
+      },
+      "contract_version": 1,
+      "project_commit": "1234567890abcdef1234567890abcdef12345678",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "class": "heavy",
+        "ports": [],
+        "runtime": "none",
+        "timeout_minutes": 120
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "web"
+        ]
+      },
+      "routing_ref": "<ROUTING_REF>",
+      "selected_host": "mac",
+      "stop_condition": "Implementation plus local verification per the project's workflow; no commits.",
+      "summary": "APP-9999",
+      "task_id": "app9999-impl",
+      "worker": {
+        "effort": null,
+        "kind": "codex",
+        "model": null,
+        "name": "app9999-impl"
+      },
+      "worktree": {
+        "deps": "link",
+        "env": "link",
+        "issue": "APP-9999",
+        "strategy": "pnpm-worktree-issue"
+      }
+    },
+    "runs/active/fixture-0.json": {
+      "authorization": {
+        "allowed": [
+          "git fetch in /home/dev/projects/example-app (remote-tracking refs only)",
+          "create issue worktree .worktrees/APP-9999",
+          "install/link deps in that worktree",
+          "run listed commands"
+        ],
+        "forbidden": [
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "push",
+          "open PR",
+          "deploy",
+          "tofu apply",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "worktree-write"
+      },
+      "commands": [
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm issue:check APP-9999"
+        },
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm test:unit"
+        }
+      ],
+      "contract_version": 1,
+      "mode": "command",
+      "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "class": "heavy",
+        "ports": [],
+        "timeout_minutes": 120
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "linux"
+        ]
+      },
+      "selected_host": "desktop",
+      "stop_condition": "Stop after pnpm test:unit exits once. Do not fix failures, edit files, commit or push. Report and go idle.",
+      "summary": "EXAMPLE (dry-run only). Run backend unit tests at an exact commit in an issue worktree; a plain command run, no agent.",
+      "task_id": "fixture-0",
+      "worker": {
+        "kind": "codex",
+        "name": "fixture-0"
+      },
+      "worktree": {
+        "deps": "link",
+        "issue": "APP-8000",
+        "strategy": "pnpm-worktree-issue"
+      }
+    },
+    "runs/active/fixture-1.json": {
+      "authorization": {
+        "allowed": [
+          "git fetch in /home/dev/projects/example-app (remote-tracking refs only)",
+          "create issue worktree .worktrees/APP-9999",
+          "install/link deps in that worktree",
+          "run listed commands"
+        ],
+        "forbidden": [
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "push",
+          "open PR",
+          "deploy",
+          "tofu apply",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "worktree-write"
+      },
+      "commands": [
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm issue:check APP-9999"
+        },
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm test:unit"
+        }
+      ],
+      "contract_version": 1,
+      "mode": "command",
+      "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "class": "heavy",
+        "ports": [],
+        "timeout_minutes": 120
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "linux"
+        ]
+      },
+      "selected_host": "desktop",
+      "stop_condition": "Stop after pnpm test:unit exits once. Do not fix failures, edit files, commit or push. Report and go idle.",
+      "summary": "EXAMPLE (dry-run only). Run backend unit tests at an exact commit in an issue worktree; a plain command run, no agent.",
+      "task_id": "fixture-1",
+      "worker": {
+        "kind": "codex",
+        "name": "fixture-1"
+      },
+      "worktree": {
+        "deps": "link",
+        "issue": "APP-8001",
+        "strategy": "pnpm-worktree-issue"
+      }
+    },
+    "runs/active/fixture-2.json": {
+      "authorization": {
+        "allowed": [
+          "git fetch in /home/dev/projects/example-app (remote-tracking refs only)",
+          "create issue worktree .worktrees/APP-9999",
+          "install/link deps in that worktree",
+          "run listed commands"
+        ],
+        "forbidden": [
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "push",
+          "open PR",
+          "deploy",
+          "tofu apply",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev (example; not granted)",
+        "scope": "worktree-write"
+      },
+      "commands": [
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm issue:check APP-9999"
+        },
+        {
+          "cwd": "<WORKTREE>",
+          "mutating": false,
+          "run": "pnpm test:unit"
+        }
+      ],
+      "contract_version": 1,
+      "mode": "command",
+      "project_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "class": "heavy",
+        "ports": [],
+        "timeout_minutes": 120
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "linux"
+        ]
+      },
+      "selected_host": "desktop",
+      "stop_condition": "Stop after pnpm test:unit exits once. Do not fix failures, edit files, commit or push. Report and go idle.",
+      "summary": "EXAMPLE (dry-run only). Run backend unit tests at an exact commit in an issue worktree; a plain command run, no agent.",
+      "task_id": "fixture-2",
+      "worker": {
+        "kind": "codex",
+        "name": "fixture-2"
+      },
+      "worktree": {
+        "deps": "link",
+        "issue": "APP-8002",
+        "strategy": "pnpm-worktree-issue"
+      }
+    },
+    "runs/tasks/app9999-impl/decision.json": {
+      "authorization_scope": "worktree-write",
+      "blockers": [],
+      "config": "config/hosts.example.json",
+      "execution_authorized": false,
+      "handoff_note": "# Task app9999-impl: APP-9999\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-app at 1234567890abcdef1234567890abcdef12345678\n- Work directory: /Users/dev/example-app/.worktrees/APP-9999\n- pnpm: use `npx -y pnpm@10.33.2`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy npx -y pnpm@10.33.2 ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/app9999-impl`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: worktree-write (granted by dev)\n- Allowed: git fetch\n- Allowed: edit and test in the task's own worktree\n- Forbidden: commit, push or open PRs\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: Implementation plus local verification per the project's workflow; no commits.\n\n## If you start another agent in a new Herdr pane\nName the agent `app9999-<role>` (e.g. `app9999-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+      "heavy": true,
+      "host_levels": {
+        "cpu": "ok",
+        "docker": "ok",
+        "hot": [],
+        "mem": "ok",
+        "overall": "ok",
+        "swap": "ok"
+      },
+      "orchestrator_host": "desktop",
+      "plan": [
+        {
+          "commands": [
+            "herdr --machine Mac agent list",
+            "herdr --machine Mac workspace list"
+          ],
+          "step": "Discover live state on the target (IDs are per-server; never reuse)"
+        },
+        {
+          "commands": [],
+          "step": "Confirm no live agent is already named 'app9999-impl' and it has no open task"
+        },
+        {
+          "commands": [
+            "herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-app --label impl --no-focus",
+            "herdr --machine Mac workspace create --cwd /Users/dev/example-app --label APP-9999 --no-focus"
+          ],
+          "step": "Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+        },
+        {
+          "commands": [
+            "herdr --machine Mac pane run __ROOT_PANE__ 'npx -y pnpm@10.33.2 worktree:issue APP-9999 -- --base 1234567890abcdef1234567890abcdef12345678 --deps link --env link && builtin cd .worktrees/APP-9999 && npx -y pnpm@10.33.2 issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'",
+            "herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000",
+            "herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 80"
+          ],
+          "step": "Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit"
+        },
+        {
+          "commands": [
+            "herdr --machine Mac agent start app9999-impl --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high"
+          ],
+          "step": "Start the worker in that shell pane (shell must be at its prompt)"
+        },
+        {
+          "commands": [
+            "b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr --machine Mac agent prompt app9999-impl \"$b\" --wait --timeout 7200000"
+          ],
+          "step": "Put the brief (runs/tasks/app9999-impl/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt"
+        },
+        {
+          "commands": [
+            "herdr --machine Mac agent get app9999-impl",
+            "herdr --machine Mac agent read app9999-impl --source recent-unwrapped --lines 200"
+          ],
+          "step": "Collect output, then verify independently (idle != success)"
+        }
+      ],
+      "preflight": {
+        "blockers": "",
+        "commit_behind_ref": "origin/main 0",
+        "home": "<HOME>/mac",
+        "kernel": "Darwin",
+        "pnpm_version": "11.0.8",
+        "preflight_status": "ok",
+        "repo_dirty_tracked": "0",
+        "repo_last_fetch": "2026-10-12T12:00:00Z",
+        "repo_pnpm_pin": "10.33.2",
+        "repo_untracked": "0"
+      },
+      "preflight_command": "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-mac 'bash -s -- --repo /Users/dev/example-app --expect-remote https://github.com/example-org/example-app.git --need-commit 1234567890abcdef1234567890abcdef12345678 --tools '\"'\"'git node pnpm codex'\"'\"' --herdr-bin '\"'\"'$HOME/.local/bin/herdr'\"'\"' --path-prepend '\"'\"'$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools'\"'\"' --worktree-at /Users/dev/example-app/.worktrees/APP-9999' < scripts/preflight.sh",
+      "project_commit": "1234567890abcdef1234567890abcdef12345678",
+      "queue_reasons": [],
+      "repository": "example-app",
+      "routing_ref": "<ROUTING_REF>",
+      "rule": "load-shared across capable hosts (desktop 3 open heavy-full, mac 0 open); origin/main resolved on mac as of its last fetch",
+      "selected_host": "mac",
+      "status": "routed",
+      "task_id": "app9999-impl",
+      "warnings": [
+        "target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree",
+        "bare pnpm is 11.0.8, pin is 10.33.2: worker brief must use the host's pnpm_cmd (npx -y pnpm@10.33.2 ...)"
+      ]
+    },
+    "runs/tasks/app9999-impl/handoff.md": "# Task app9999-impl: APP-9999\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-app at 1234567890abcdef1234567890abcdef12345678\n- Work directory: /Users/dev/example-app/.worktrees/APP-9999\n- pnpm: use `npx -y pnpm@10.33.2`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy npx -y pnpm@10.33.2 ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/app9999-impl`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: worktree-write (granted by dev)\n- Allowed: git fetch\n- Allowed: edit and test in the task's own worktree\n- Forbidden: commit, push or open PRs\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: Implementation plus local verification per the project's workflow; no commits.\n\n## If you start another agent in a new Herdr pane\nName the agent `app9999-<role>` (e.g. `app9999-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "runs/tasks/app9999-impl/task.json": {
+      "_resolved_ref": "origin/main",
+      "authorization": {
+        "allowed": [
+          "git fetch",
+          "edit and test in the task's own worktree"
+        ],
+        "forbidden": [
+          "commit, push or open PRs",
+          "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+          "git pull/reset/clean/checkout/stash in the main checkout",
+          "stop other agents",
+          "change security settings"
+        ],
+        "granted_by": "dev",
+        "scope": "worktree-write"
+      },
+      "contract_version": 1,
+      "project_commit": "1234567890abcdef1234567890abcdef12345678",
+      "repository": {
+        "name": "example-app",
+        "remote": "https://github.com/example-org/example-app.git"
+      },
+      "resources": {
+        "class": "heavy",
+        "ports": [],
+        "runtime": "none",
+        "timeout_minutes": 120
+      },
+      "routing": {
+        "requested_host": null,
+        "requires": [
+          "web"
+        ]
+      },
+      "routing_ref": "<ROUTING_REF>",
+      "selected_host": "mac",
+      "stop_condition": "Implementation plus local verification per the project's workflow; no commits.",
+      "summary": "APP-9999",
+      "task_id": "app9999-impl",
+      "worker": {
+        "effort": null,
+        "kind": "codex",
+        "model": null,
+        "name": "app9999-impl"
+      },
+      "worktree": {
+        "deps": "link",
+        "env": "link",
+        "issue": "APP-9999",
+        "strategy": "pnpm-worktree-issue"
+      }
+    }
+  },
+  "cli_output": {
+    "authorization_scope": "worktree-write",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "execution_authorized": false,
+    "handoff_note": "# Task app9999-impl: APP-9999\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-app at 1234567890abcdef1234567890abcdef12345678\n- Work directory: /Users/dev/example-app/.worktrees/APP-9999\n- pnpm: use `npx -y pnpm@10.33.2`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy npx -y pnpm@10.33.2 ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/app9999-impl`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: worktree-write (granted by dev)\n- Allowed: git fetch\n- Allowed: edit and test in the task's own worktree\n- Forbidden: commit, push or open PRs\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: Implementation plus local verification per the project's workflow; no commits.\n\n## If you start another agent in a new Herdr pane\nName the agent `app9999-<role>` (e.g. `app9999-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "heavy": true,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "orchestrator_host": "desktop",
+    "plan": [
+      {
+        "commands": [
+          "herdr --machine Mac agent list",
+          "herdr --machine Mac workspace list"
+        ],
+        "step": "Discover live state on the target (IDs are per-server; never reuse)"
+      },
+      {
+        "commands": [],
+        "step": "Confirm no live agent is already named 'app9999-impl' and it has no open task"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-app --label impl --no-focus",
+          "herdr --machine Mac workspace create --cwd /Users/dev/example-app --label APP-9999 --no-focus"
+        ],
+        "step": "Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac pane run __ROOT_PANE__ 'npx -y pnpm@10.33.2 worktree:issue APP-9999 -- --base 1234567890abcdef1234567890abcdef12345678 --deps link --env link && builtin cd .worktrees/APP-9999 && npx -y pnpm@10.33.2 issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'",
+          "herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000",
+          "herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 80"
+        ],
+        "step": "Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac agent start app9999-impl --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high"
+        ],
+        "step": "Start the worker in that shell pane (shell must be at its prompt)"
+      },
+      {
+        "commands": [
+          "b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr --machine Mac agent prompt app9999-impl \"$b\" --wait --timeout 7200000"
+        ],
+        "step": "Put the brief (runs/tasks/app9999-impl/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac agent get app9999-impl",
+          "herdr --machine Mac agent read app9999-impl --source recent-unwrapped --lines 200"
+        ],
+        "step": "Collect output, then verify independently (idle != success)"
+      }
+    ],
+    "preflight": {
+      "blockers": "",
+      "commit_behind_ref": "origin/main 0",
+      "home": "<HOME>/mac",
+      "kernel": "Darwin",
+      "pnpm_version": "11.0.8",
+      "preflight_status": "ok",
+      "repo_dirty_tracked": "0",
+      "repo_last_fetch": "2026-10-12T12:00:00Z",
+      "repo_pnpm_pin": "10.33.2",
+      "repo_untracked": "0"
+    },
+    "preflight_command": "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-mac 'bash -s -- --repo /Users/dev/example-app --expect-remote https://github.com/example-org/example-app.git --need-commit 1234567890abcdef1234567890abcdef12345678 --tools '\"'\"'git node pnpm codex'\"'\"' --herdr-bin '\"'\"'$HOME/.local/bin/herdr'\"'\"' --path-prepend '\"'\"'$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools'\"'\"' --worktree-at /Users/dev/example-app/.worktrees/APP-9999' < scripts/preflight.sh",
+    "project_commit": "1234567890abcdef1234567890abcdef12345678",
+    "queue_reasons": [],
+    "recorded": "runs/tasks/app9999-impl",
+    "repository": "example-app",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "load-shared across capable hosts (desktop 3 open heavy-full, mac 0 open); origin/main resolved on mac as of its last fetch",
+    "selected_host": "mac",
+    "status": "routed",
+    "task_id": "app9999-impl",
+    "warnings": [
+      "target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree",
+      "bare pnpm is 11.0.8, pin is 10.33.2: worker brief must use the host's pnpm_cmd (npx -y pnpm@10.33.2 ...)"
+    ]
+  },
+  "decision": {
+    "authorization_scope": "worktree-write",
+    "blockers": [],
+    "config": "config/hosts.example.json",
+    "execution_authorized": false,
+    "handoff_note": "# Task app9999-impl: APP-9999\n\n## Routing (from agent-routing; not a workflow)\n- Host: mac (MacBook Pro. macOS, iOS and Xcode work, or tasks that explicitly request the Mac. Checkouts may be stale.)\n- Repository: /Users/dev/example-app at 1234567890abcdef1234567890abcdef12345678\n- Work directory: /Users/dev/example-app/.worktrees/APP-9999\n- pnpm: use `npx -y pnpm@10.33.2`\n- Routing ref: <ROUTING_REF>\n\n## Heavy phases take turns on this machine\nWrap every heavy command in `~/agent-routing/scripts/heavy`, e.g. `~/agent-routing/scripts/heavy npx -y pnpm@10.33.2 ready:check <PR>`. Heavy means Docker or Compose (`docker compose up`, integration tests), full test suites, typechecks, web builds or exports, and Playwright/browser smokes. It waits for a free heavy slot on this machine (at most 2 at once, first come first served), runs the command, and frees the slot when it ends. Everything else (reading, editing, focused single-file tests, model work) runs unwrapped and unlimited. If it says it's waiting, wait; don't run the command unwrapped.\n\n## Reports survive a restart; host faults stop the task\nWrite reports, verdicts and anything you must not lose under `$ROUTE_REPORT_DIR` (`<HOME>/mac/.cache/agent-routing/reports/app9999-impl`; `mkdir -p` it first), never `/tmp`: `/tmp` is wiped when the machine restarts.\n\n## Workflow\nFollow `/Users/dev/example-app/AGENTS.md` and the project skill that matches this work. They own the workflow, verification, commit/PR shape, workpad and reporting; this note does not repeat them.\n\n## Authority and stop point\n- Scope: worktree-write (granted by dev)\n- Allowed: git fetch\n- Allowed: edit and test in the task's own worktree\n- Forbidden: commit, push or open PRs\n- Forbidden: anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)\n- Forbidden: git pull/reset/clean/checkout/stash in the main checkout\n- Forbidden: stop other agents\n- Forbidden: change security settings\n- Stop point: Implementation plus local verification per the project's workflow; no commits.\n\n## If you start another agent in a new Herdr pane\nName the agent `app9999-<role>` (e.g. `app9999-tests`; lowercase, max 32 chars) and tag its pane so the orchestrator sees it under you: `herdr pane report-metadata <new-pane-id> --source agent-routing --token parent=$HERDR_PANE_ID`.\n\n## Also report\nAlongside the project's own handoff: host, work directory, and exact head SHA.\n",
+    "heavy": true,
+    "host_levels": {
+      "cpu": "ok",
+      "docker": "ok",
+      "hot": [],
+      "mem": "ok",
+      "overall": "ok",
+      "swap": "ok"
+    },
+    "orchestrator_host": "desktop",
+    "plan": [
+      {
+        "commands": [
+          "herdr --machine Mac agent list",
+          "herdr --machine Mac workspace list"
+        ],
+        "step": "Discover live state on the target (IDs are per-server; never reuse)"
+      },
+      {
+        "commands": [],
+        "step": "Confirm no live agent is already named 'app9999-impl' and it has no open task"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-app --label impl --no-focus",
+          "herdr --machine Mac workspace create --cwd /Users/dev/example-app --label APP-9999 --no-focus"
+        ],
+        "step": "Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac pane run __ROOT_PANE__ 'npx -y pnpm@10.33.2 worktree:issue APP-9999 -- --base 1234567890abcdef1234567890abcdef12345678 --deps link --env link && builtin cd .worktrees/APP-9999 && npx -y pnpm@10.33.2 issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'",
+          "herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000",
+          "herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 80"
+        ],
+        "step": "Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac agent start app9999-impl --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high"
+        ],
+        "step": "Start the worker in that shell pane (shell must be at its prompt)"
+      },
+      {
+        "commands": [
+          "b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr --machine Mac agent prompt app9999-impl \"$b\" --wait --timeout 7200000"
+        ],
+        "step": "Put the brief (runs/tasks/app9999-impl/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt"
+      },
+      {
+        "commands": [
+          "herdr --machine Mac agent get app9999-impl",
+          "herdr --machine Mac agent read app9999-impl --source recent-unwrapped --lines 200"
+        ],
+        "step": "Collect output, then verify independently (idle != success)"
+      }
+    ],
+    "preflight": {
+      "blockers": "",
+      "commit_behind_ref": "origin/main 0",
+      "home": "<HOME>/mac",
+      "kernel": "Darwin",
+      "pnpm_version": "11.0.8",
+      "preflight_status": "ok",
+      "repo_dirty_tracked": "0",
+      "repo_last_fetch": "2026-10-12T12:00:00Z",
+      "repo_pnpm_pin": "10.33.2",
+      "repo_untracked": "0"
+    },
+    "preflight_command": "ssh -o BatchMode=yes -o ConnectTimeout=10 dev-mac 'bash -s -- --repo /Users/dev/example-app --expect-remote https://github.com/example-org/example-app.git --need-commit 1234567890abcdef1234567890abcdef12345678 --tools '\"'\"'git node pnpm codex'\"'\"' --herdr-bin '\"'\"'$HOME/.local/bin/herdr'\"'\"' --path-prepend '\"'\"'$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools'\"'\"' --worktree-at /Users/dev/example-app/.worktrees/APP-9999' < scripts/preflight.sh",
+    "project_commit": "1234567890abcdef1234567890abcdef12345678",
+    "queue_reasons": [],
+    "recorded": "runs/tasks/app9999-impl",
+    "repository": "example-app",
+    "routing_ref": "<ROUTING_REF>",
+    "rule": "load-shared across capable hosts (desktop 3 open heavy-full, mac 0 open); origin/main resolved on mac as of its last fetch",
+    "selected_host": "mac",
+    "status": "routed",
+    "task_id": "app9999-impl",
+    "warnings": [
+      "target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree",
+      "bare pnpm is 11.0.8, pin is 10.33.2: worker brief must use the host's pnpm_cmd (npx -y pnpm@10.33.2 ...)"
+    ]
+  },
+  "exit_code": 0,
+  "helpers": {
+    "herdr_group": [
+      "APP-9999",
+      "impl"
+    ],
+    "issue_key": "APP-9999",
+    "setup_command": [
+      "npx -y pnpm@10.33.2 worktree:issue APP-9999 -- --base 1234567890abcdef1234567890abcdef12345678 --deps link --env link && builtin cd .worktrees/APP-9999 && npx -y pnpm@10.33.2 issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"",
+      600000
+    ],
+    "task_step": "impl",
+    "worktree_dir": "/Users/dev/example-app/.worktrees/APP-9999",
+    "worktree_identity": [
+      "/Users/dev/example-app/.worktrees/APP-9999",
+      "feature/APP-9999"
+    ]
+  },
+  "human_output": "task:          app9999-impl\nrouting_ref:   <ROUTING_REF>\norchestrator:  desktop\nselected host: mac  (load-shared across capable hosts (desktop 3 open heavy-full, mac 0 open); origin/main resolved on mac as of its last fetch)\nrepository:    example-app @ 1234567890abcdef1234567890abcdef12345678\nauthorization: worktree-write  — execution_authorized: NO (recommendation only)\nload class:    heavy (counts against max_heavy)\nwarning:       target checkout may be stale: fetch is allowed, but never pull/reset/clean/checkout/switch/restore/stash it; work from project_commit in a worktree\nwarning:       bare pnpm is 11.0.8, pin is 10.33.2: worker brief must use the host's pnpm_cmd (npx -y pnpm@10.33.2 ...)\npreflight:\n  preflight_status=ok\n  blockers=\n  commit_behind_ref=origin/main 0\n  home=<HOME>/mac\n  kernel=Darwin\n  repo_last_fetch=2026-10-12T12:00:00Z\n  repo_dirty_tracked=0\n  repo_untracked=0\n  pnpm_version=11.0.8\n  repo_pnpm_pin=10.33.2\nrecorded:      runs/tasks/app9999-impl/ (task.json, decision.json, handoff.md) + active marker\ndry-run plan (fill __PLACEHOLDERS__ from live JSON responses; review every command; never paste one unfilled):\n  1. Discover live state on the target (IDs are per-server; never reuse)\n       $ herdr --machine Mac agent list\n       $ herdr --machine Mac workspace list\n  2. Confirm no live agent is already named 'app9999-impl' and it has no open task\n  3. Open the task's own tab in the issue's workspace (APP-9999): if `workspace list` shows a workspace with that label, `tab create` in it; else `workspace create` (then `tab rename` its first tab). ROOT_PANE = .result.root_pane.pane_id. The env goes on the tab: tabs don't share it\n       $ herdr --machine Mac tab create --workspace __ISSUE_WORKSPACE__ --cwd /Users/dev/example-app --label impl --no-focus\n       $ herdr --machine Mac workspace create --cwd /Users/dev/example-app --label APP-9999 --no-focus\n  4. Create/open the worktree (the project's helper where it has one). Continue only if rc=0, any whereami checks are ok, and HEAD == project_commit\n       $ herdr --machine Mac pane run __ROOT_PANE__ 'npx -y pnpm@10.33.2 worktree:issue APP-9999 -- --base 1234567890abcdef1234567890abcdef12345678 --deps link --env link && builtin cd .worktrees/APP-9999 && npx -y pnpm@10.33.2 issue:check APP-9999 && git rev-parse HEAD; echo \"__RT_DONE_0__ rc=$?\"'\n       $ herdr --machine Mac pane wait-output __ROOT_PANE__ --regex '__RT_DONE_0__ rc=[0-9]+' --timeout 600000\n       $ herdr --machine Mac pane read __ROOT_PANE__ --source recent-unwrapped --lines 80\n  5. Start the worker in that shell pane (shell must be at its prompt)\n       $ herdr --machine Mac agent start app9999-impl --kind codex --pane __ROOT_PANE__ -- --approve-for-me -m gpt-6.1-sol -c model_reasoning_effort=high\n  6. Put the brief (runs/tasks/app9999-impl/handoff.md from --record, plus the issue reference) at an absolute path on the ORCHESTRATOR (desktop); BRIEF_FILE must match [A-Za-z0-9._/-]+. Send exactly one prompt\n       $ b=\"$(cat __BRIEF_FILE__)\" && [ -n \"$b\" ] && herdr --machine Mac agent prompt app9999-impl \"$b\" --wait --timeout 7200000\n  7. Collect output, then verify independently (idle != success)\n       $ herdr --machine Mac agent get app9999-impl\n       $ herdr --machine Mac agent read app9999-impl --source recent-unwrapped --lines 200\nstatus:        ROUTED\n",
+  "preflight_calls": [
+    {
+      "argv": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=10",
+        "dev-mac",
+        "bash -s -- --repo /Users/dev/example-app --expect-remote https://github.com/example-org/example-app.git --need-commit 1234567890abcdef1234567890abcdef12345678 --tools 'git node pnpm codex' --herdr-bin '$HOME/.local/bin/herdr' --path-prepend '$HOME/.local/bin:/opt/homebrew/bin:$HOME/Library/Android/sdk/emulator:$HOME/Library/Android/sdk/platform-tools' --worktree-at /Users/dev/example-app/.worktrees/APP-9999"
+      ],
+      "stdin_path": "<ROOT>/scripts/preflight.sh"
+    }
+  ],
+  "resolve_calls": [
+    {
+      "host": "mac",
+      "orchestrator": "desktop",
+      "ref": "origin/main"
+    }
+  ],
+  "stderr": "",
+  "task_after_decide": {
+    "_resolved_ref": "origin/main",
+    "authorization": {
+      "allowed": [
+        "git fetch",
+        "edit and test in the task's own worktree"
+      ],
+      "forbidden": [
+        "commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "granted_by": "dev",
+      "scope": "worktree-write"
+    },
+    "contract_version": 1,
+    "project_commit": "1234567890abcdef1234567890abcdef12345678",
+    "repository": {
+      "name": "example-app",
+      "remote": "https://github.com/example-org/example-app.git"
+    },
+    "resources": {
+      "class": "heavy",
+      "ports": [],
+      "runtime": "none",
+      "timeout_minutes": 120
+    },
+    "routing": {
+      "requested_host": null,
+      "requires": [
+        "web"
+      ]
+    },
+    "stop_condition": "Implementation plus local verification per the project's workflow; no commits.",
+    "summary": "APP-9999",
+    "task_id": "app9999-impl",
+    "worker": {
+      "effort": null,
+      "kind": "codex",
+      "model": null,
+      "name": "app9999-impl"
+    },
+    "worktree": {
+      "deps": "link",
+      "env": "link",
+      "issue": "APP-9999",
+      "strategy": "pnpm-worktree-issue"
+    }
+  },
+  "task_before_decide": {
+    "_commit_ref": "origin/main",
+    "authorization": {
+      "allowed": [
+        "git fetch",
+        "edit and test in the task's own worktree"
+      ],
+      "forbidden": [
+        "commit, push or open PRs",
+        "anything the project reserves for the parent or human (merge, ready-for-review, status transitions, deploy, staging/provider writes)",
+        "git pull/reset/clean/checkout/stash in the main checkout",
+        "stop other agents",
+        "change security settings"
+      ],
+      "granted_by": "dev",
+      "scope": "worktree-write"
+    },
+    "contract_version": 1,
+    "project_commit": "0000000000000000000000000000000000000000",
+    "repository": {
+      "name": "example-app",
+      "remote": "https://github.com/example-org/example-app.git"
+    },
+    "resources": {
+      "class": "heavy",
+      "ports": [],
+      "runtime": "none",
+      "timeout_minutes": 120
+    },
+    "routing": {
+      "requested_host": null,
+      "requires": [
+        "web"
+      ]
+    },
+    "stop_condition": "Implementation plus local verification per the project's workflow; no commits.",
+    "summary": "APP-9999",
+    "task_id": "app9999-impl",
+    "worker": {
+      "effort": null,
+      "kind": "codex",
+      "model": null,
+      "name": "app9999-impl"
+    },
+    "worktree": {
+      "deps": "link",
+      "env": "link",
+      "issue": "APP-9999",
+      "strategy": "pnpm-worktree-issue"
+    }
+  }
+}

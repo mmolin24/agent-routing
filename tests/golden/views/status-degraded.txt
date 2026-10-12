@@ -1,0 +1,35 @@
+app9001-impl                 desktop  light APP-9001 > impl        dispatched  196/120 min OVER
+    git    3 unpushed (oldest 131 min) · 1 stash · 2 dirty
+    worker app9001-impl             codex    done     gpt-6.1-sol high
+    child  app9001-review-child     claude   working  claude-opus-5-5 medium fast
+    child  app9001-test-child       codex    done     gpt-6.1-sol high
+app9002-gate                 mac      heavy APP-9002 > gate        dispatched  INTERRUPTED: mac restarted 12:55Z
+    worker app9002-gate             codex    done     gpt-6.1-sol high
+app9011-impl                 mac      light APP-9011 > impl        dispatched  INTERRUPTED: mac restarted 12:55Z
+app9012-impl                 desktop  heavy APP-9012 > impl        dispatched  81/120 min
+standalone-audit             desktop  light standalone-audit > impl open
+untracked:     desktop orchestrator (codex, working) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/scratch
+untracked:     desktop routing-maintainer (codex, idle) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/scratch
+untracked:     mac scratch-helper (codex, working) gpt-6.1-sol high  cwd /fixture/mac/example-app/.worktrees/scratch
+untracked:     desktop app9005-impl (codex, done) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9005
+untracked:     mac app9006-impl (codex, idle) gpt-6.1-sol high  cwd /fixture/mac/example-app/.worktrees/APP-9006
+untracked:     desktop app9007-impl (codex, done) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9007
+untracked:     desktop app9007-child (codex, done) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9007
+untracked:     desktop app9015-impl (codex, idle) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9015
+untracked:     mac app9016-impl (codex, done) gpt-6.1-sol high  cwd /fixture/mac/example-app/.worktrees/APP-9016
+untracked:     desktop app9001-old-impl (codex, idle) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9001
+untracked:     desktop app9009-old-gate (codex, done) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9009
+untracked:     desktop app9017-impl (codex, done) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9017
+untracked:     desktop app9018-impl (codex, idle) gpt-6.1-sol high  cwd /fixture/desktop/example-app/.worktrees/APP-9018
+unreachable:   mac: synthetic SSH timeout
+herdr from here: desktop: herdr   mac: herdr --machine Mac
+desktop  heavy 1/3 ['app9012-impl']  light 2  queued 1/6 ['app9009-gate']
+         load 4.0/16 cores (ok)  mem 16.0/24.0 GB free (ok)  swap 0.0/4.0 GB (ok)  docker up 2.0/14.0 GB (ok)  disk /mnt/c 80.0/512.0 GB free  overall OK
+mac      heavy 1/2 ['app9002-gate']  light 1  queued 2/6 ['app9013-impl', 'app9013-gate']
+         load 12.0/15 cores (warn)  mem 16.0/24.0 GB free, pressure critical (hot)  swap 0.0/4.0 GB (ok)  docker down 2.0/14.0 GB (-)  disk / 80.0/512.0 GB free  overall HOT
+WARNING:       NO WORKER app9012-impl on desktop: no worker agent on its host, 81 min; it holds its heavy slot with nothing running: inspect (route --listen app9012-impl), then --close it and route it again with --dispatch
+WARNING:       NO WORKER standalone-audit on desktop: never dispatched (recorded only, or its plan run by hand), 86 min; it holds its slot with nothing running: inspect (route --listen standalone-audit), then --close it and route it again with --dispatch
+WARNING:       GPG AGENT LOCKED on desktop: signed commits fail (workers' commits and pushes, merges) and preflight blocks draft-pr there. It starts empty after every restart: ask the human to run, in their own terminal: echo test | gpg --clearsign >/dev/null
+WARNING:       DOCKER DOWN on mac: heavy work there will fail
+WARNING:       HOST RESET mac restarted 12:55Z: 2 open task(s) dispatched before it lost their worker, children and containers: app9002-gate @ 6f63f93a6f63, app9011-impl @ 6f63f93a6f63. Inspect each worktree (unpushed work, reports), record it, then --close <id> --outcome interrupted; re-dispatch only with the human's OK
+next:          route.py --next --dispatch to start the oldest queued task that fits (without --dispatch: a dry run)
